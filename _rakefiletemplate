@@ -1,6 +1,6 @@
 gem 'albacore', '<= 0.1.5'
 require 'albacore'
-require 'FileUtils'
+require 'fileutils'
 
 COMPILE_TARGET = "debug" unless defined?(COMPILE_TARGET)
 PLATFORM = "Any CPU" unless defined?(PLATFORM)

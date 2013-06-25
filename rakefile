@@ -1,6 +1,6 @@
 gem 'albacore', '<= 0.1.5'
 require 'albacore'
-require 'FileUtils'
+require 'fileutils'
 
 DIST_DIR = "dist"
 COMPILE_TARGET = "debug"
