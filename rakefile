@@ -1,11 +1,11 @@
 gem 'albacore', '<= 0.1.5'
 require 'albacore'
-require 'FileUtils'
+require 'fileutils'
 
 DIST_DIR = "dist"
 COMPILE_TARGET = "debug"
 PLATFORM = "Any CPU"
-BUILD_NUMBER_BASE = "3.0.0"
+BUILD_NUMBER_BASE = "4.0.0"
 PRODUCT = "NServiceBus-Contrib"
 
 GLOBAL_BUILD_DIR = "build"

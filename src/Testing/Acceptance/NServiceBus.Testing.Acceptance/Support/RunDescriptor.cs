@@ -9,7 +9,7 @@
     {
         protected bool Equals(RunDescriptor other)
         {
-            return string.Equals(Key, other.Key);
+            return string.Equals(this.Key, other.Key);
         }
 
         public override bool Equals(object obj)
@@ -17,24 +17,33 @@
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((RunDescriptor) obj);
+            return this.Equals((RunDescriptor) obj);
         }
 
         public override int GetHashCode()
         {
-            return (Key != null ? Key.GetHashCode() : 0);
+            return (this.Key != null ? this.Key.GetHashCode() : 0);
         }
 
         public RunDescriptor()
         {
-            Settings = new Dictionary<string, string>();
+            this.Settings = new Dictionary<string, string>();
         }
 
         public RunDescriptor(RunDescriptor template)
         {
-            Settings = template.Settings.ToDictionary(entry => entry.Key,
-                                                      entry => entry.Value);
-            Key = template.Key;
+            InitializeWithDescriptor(template);
+        }
+
+        public RunDescriptor(params RunDescriptor[] templates)
+        {
+            for (var i = 0; i < templates.Length; i++)
+            {
+                if (i == 0)
+                    this.InitializeWithDescriptor(templates[i]);
+                else
+                    this.Merge(templates[i]);
+            }
         }
 
         public string Key { get; set; }
@@ -49,12 +58,19 @@
 
         public void Merge(RunDescriptor descriptorToAdd)
         {
-            Key += "." + descriptorToAdd.Key;
+            this.Key += "." + descriptorToAdd.Key;
 
             foreach (var setting in descriptorToAdd.Settings)
             {
-                Settings[setting.Key] = setting.Value;
+                this.Settings[setting.Key] = setting.Value;
             }
+        }
+
+        private void InitializeWithDescriptor(RunDescriptor descriptor)
+        {
+            this.Settings = descriptor.Settings.ToDictionary(entry => entry.Key,
+                                                      entry => entry.Value);
+            this.Key = descriptor.Key;
         }
     }
 }

@@ -2,12 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Runtime.Remoting.Lifetime;
     using System.Threading;
     using System.Threading.Tasks;
-    using Installation.Environments;
-    using Logging;
+
+    using NServiceBus;
+    using NServiceBus.Installation.Environments;
+    using NServiceBus.Logging;
+
 
     [Serializable]
     public class EndpointRunner : MarshalByRefObject
@@ -25,49 +27,57 @@
         {
             try
             {
-                behaviour = endpointBehaviour;
-                scenarioContext = run.ScenarioContext;
-                configuration = ((IEndpointConfigurationFactory)Activator.CreateInstance(endpointBehaviour.EndpointBuilderType)).Get();
-                configuration.EndpointName = endpointName;
+                this.behaviour = endpointBehaviour;
+                this.scenarioContext = run.ScenarioContext;
+                this.configuration = ((IEndpointConfigurationFactory)Activator.CreateInstance(endpointBehaviour.EndpointBuilderType)).Get();
+                this.configuration.EndpointName = endpointName;
 
-                if (!string.IsNullOrEmpty(configuration.CustomMachineName))
+                if (!string.IsNullOrEmpty(this.configuration.CustomMachineName))
                 {
-                    NServiceBus.Support.RuntimeEnvironment.MachineNameAction = () => configuration.CustomMachineName;
+                    NServiceBus.Support.RuntimeEnvironment.MachineNameAction = () => this.configuration.CustomMachineName;
                 }
 
                 //apply custom config settings
-                endpointBehaviour.CustomConfig.ForEach(customAction => customAction(config));
-                config = configuration.GetConfiguration(run, routingTable);
+                endpointBehaviour.CustomConfig.ForEach(customAction => customAction(this.config));
+                this.config = this.configuration.GetConfiguration(run, routingTable);
 
-
-
-                if (scenarioContext != null)
+                if (this.scenarioContext != null)
                 {
-                    config.Configurer.RegisterSingleton(scenarioContext.GetType(), scenarioContext);
-                    scenarioContext.ContextPropertyChanged += scenarioContext_ContextPropertyChanged;
+                    if (this.scenarioContext.GetType() != typeof(ScenarioContext))
+                    {
+                        this.config.Configurer.RegisterSingleton(this.scenarioContext.GetType(), this.scenarioContext);
+                    }
+
+                    if (this.scenarioContext.GetType() != typeof(DefaultContext) && typeof(DefaultContext).IsAssignableFrom(this.scenarioContext.GetType()))
+                    {
+                        this.config.Configurer.RegisterSingleton(typeof(DefaultContext), this.scenarioContext);
+                    }
+
+                    this.config.Configurer.RegisterSingleton(typeof(ScenarioContext), this.scenarioContext);
+                    this.scenarioContext.ContextPropertyChanged += this.scenarioContext_ContextPropertyChanged;
                 }
 
 
-                bus = config.CreateBus();
+                this.bus = this.config.CreateBus();
 
                 Configure.Instance.ForInstallationOn<Windows>().Install();
 
                 Task.Factory.StartNew(() =>
                     {
-                        while (!stopped)
+                        while (!this.stopped)
                         {
-                            contextChanged.WaitOne(TimeSpan.FromSeconds(5)); //we spin around each 5 s since the callback mechanism seems to be shaky
+                            this.contextChanged.WaitOne(TimeSpan.FromSeconds(5)); //we spin around each 5 s since the callback mechanism seems to be shaky
 
-                            lock (behaviour)
+                            lock (this.behaviour)
                             {
 
-                                foreach (var when in behaviour.Whens)
+                                foreach (var when in this.behaviour.Whens)
                                 {
-                                    if (executedWhens.Contains(when.Id))
+                                    if (this.executedWhens.Contains(when.Id))
                                         continue;
 
-                                    if(when.ExecuteAction(scenarioContext, bus))
-                                        executedWhens.Add(when.Id);
+                                    if (when.ExecuteAction(this.scenarioContext, this.bus))
+                                        this.executedWhens.Add(when.Id);
                                 }
                             }
                         }
@@ -81,11 +91,12 @@
                 return Result.Failure(ex);
             }
         }
-        IList<Guid> executedWhens = new List<Guid>();
- 
+
+        readonly IList<Guid> executedWhens = new List<Guid>();
+
         void scenarioContext_ContextPropertyChanged(object sender, EventArgs e)
         {
-            contextChanged.Release();
+            this.contextChanged.Release();
         }
 
 
@@ -93,21 +104,21 @@
         {
             try
             {
-                foreach (var given in behaviour.Givens)
+                foreach (var given in this.behaviour.Givens)
                 {
-                    var action = given.GetAction(scenarioContext);
+                    var action = given.GetAction(this.scenarioContext);
 
-                    action(bus);
+                    action(this.bus);
                 }
 
-                bus.Start();
+                this.bus.Start();
 
 
                 return Result.Success();
             }
             catch (Exception ex)
             {
-                Logger.Error("Failed to start endpoint " + configuration.EndpointName, ex);
+                Logger.Error("Failed to start endpoint " + this.configuration.EndpointName, ex);
 
                 return Result.Failure(ex);
             }
@@ -117,11 +128,11 @@
         {
             try
             {
-                stopped = true;
+                this.stopped = true;
 
-                scenarioContext.ContextPropertyChanged -= scenarioContext_ContextPropertyChanged;
+                this.scenarioContext.ContextPropertyChanged -= this.scenarioContext_ContextPropertyChanged;
 
-                bus.Dispose();
+                this.bus.Dispose();
 
 
 
@@ -129,7 +140,7 @@
             }
             catch (Exception ex)
             {
-                Logger.Error("Failed to stop endpoint " + configuration.EndpointName, ex);
+                Logger.Error("Failed to stop endpoint " + this.configuration.EndpointName, ex);
 
                 return Result.Failure(ex);
             }
@@ -151,6 +162,7 @@
         {
             return AppDomain.CurrentDomain.FriendlyName;
         }
+
         static readonly ILog Logger = LogManager.GetLogger(typeof(EndpointRunner));
 
         [Serializable]
@@ -160,7 +172,7 @@
 
             public bool Failed
             {
-                get { return ExceptionMessage != null; }
+                get { return this.ExceptionMessage != null; }
 
             }
 
@@ -181,6 +193,4 @@
             public Type ExceptionType { get; set; }
         }
     }
-
-
 }

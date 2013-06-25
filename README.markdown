@@ -17,7 +17,7 @@ The NServiceBus Contrib uses a single root rakefile wich calls every rakefile it
 	<code>
 	gem 'albacore', '<= 0.1.5'
 	require 'albacore'
-	require 'FileUtils'
+	require 'fileutils'
 
 	COMPILE_TARGET = "debug" unless defined?(COMPILE_TARGET)
 	PLATFORM = "Any CPU" unless defined?(PLATFORM)

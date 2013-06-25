@@ -15,6 +15,8 @@
 
         IAdvancedScenarioWithEndpointBehavior<TContext> Repeat(Action<RunDescriptorsBuilder> runtimeDescriptor);
 
+        IAdvancedScenarioWithEndpointBehavior<TContext> Should(Action<TContext> should);
+
     }
 
     public interface IAdvancedScenarioWithEndpointBehavior<TContext> where TContext : ScenarioContext

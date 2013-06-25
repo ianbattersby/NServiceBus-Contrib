@@ -11,3 +11,7 @@ _ReSharper.*
 [Bb]uild
 [Dd]ist
 src/CommonAssemblyInfo.cs
+
+# nuget
+packages
+!repositories.config

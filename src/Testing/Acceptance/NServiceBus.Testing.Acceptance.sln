@@ -3,18 +3,60 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NServiceBus.Testing.Acceptance", "NServiceBus.Testing.Acceptance\NServiceBus.Testing.Acceptance.csproj", "{758357F6-CD31-4337-80C4-BA377FC257AF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{7AD3C9F4-72EB-4A30-B9BB-CDE3D3357E99}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NServiceBus.Testing.Acceptance.Tests", "NServiceBus.Testing.Acceptance.Tests\NServiceBus.Testing.Acceptance.Tests.csproj", "{2C964CCF-6C1C-4528-A217-DA0F716566BF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{444BD09E-2C16-4B88-89AA-70EB70097AF0}"
+	ProjectSection(SolutionItems) = preProject
+		packaging\nuspec\NServiceBus.Testing.Acceptance.nuspec = packaging\nuspec\NServiceBus.Testing.Acceptance.nuspec
+		rakefile = rakefile
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{758357F6-CD31-4337-80C4-BA377FC257AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{758357F6-CD31-4337-80C4-BA377FC257AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{758357F6-CD31-4337-80C4-BA377FC257AF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{758357F6-CD31-4337-80C4-BA377FC257AF}.Debug|x64.Build.0 = Debug|Any CPU
+		{758357F6-CD31-4337-80C4-BA377FC257AF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{758357F6-CD31-4337-80C4-BA377FC257AF}.Debug|x86.Build.0 = Debug|Any CPU
 		{758357F6-CD31-4337-80C4-BA377FC257AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{758357F6-CD31-4337-80C4-BA377FC257AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{758357F6-CD31-4337-80C4-BA377FC257AF}.Release|x64.ActiveCfg = Release|Any CPU
+		{758357F6-CD31-4337-80C4-BA377FC257AF}.Release|x64.Build.0 = Release|Any CPU
+		{758357F6-CD31-4337-80C4-BA377FC257AF}.Release|x86.ActiveCfg = Release|Any CPU
+		{758357F6-CD31-4337-80C4-BA377FC257AF}.Release|x86.Build.0 = Release|Any CPU
+		{2C964CCF-6C1C-4528-A217-DA0F716566BF}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{2C964CCF-6C1C-4528-A217-DA0F716566BF}.Debug|Any CPU.Build.0 = Debug|x86
+		{2C964CCF-6C1C-4528-A217-DA0F716566BF}.Debug|x64.ActiveCfg = Debug|x64
+		{2C964CCF-6C1C-4528-A217-DA0F716566BF}.Debug|x64.Build.0 = Debug|x64
+		{2C964CCF-6C1C-4528-A217-DA0F716566BF}.Debug|x86.ActiveCfg = Debug|x86
+		{2C964CCF-6C1C-4528-A217-DA0F716566BF}.Debug|x86.Build.0 = Debug|x86
+		{2C964CCF-6C1C-4528-A217-DA0F716566BF}.Release|Any CPU.ActiveCfg = Release|x86
+		{2C964CCF-6C1C-4528-A217-DA0F716566BF}.Release|Any CPU.Build.0 = Release|x86
+		{2C964CCF-6C1C-4528-A217-DA0F716566BF}.Release|x64.ActiveCfg = Release|x64
+		{2C964CCF-6C1C-4528-A217-DA0F716566BF}.Release|x64.Build.0 = Release|x64
+		{2C964CCF-6C1C-4528-A217-DA0F716566BF}.Release|x86.ActiveCfg = Release|x86
+		{2C964CCF-6C1C-4528-A217-DA0F716566BF}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.2\lib\NET35;packages\Unity.Interception.2.1.505.2\lib\NET35
 	EndGlobalSection
 EndGlobal

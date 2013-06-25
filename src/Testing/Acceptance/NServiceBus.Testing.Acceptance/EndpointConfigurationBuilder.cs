@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
     using System.Threading;
 
     using Support;
@@ -10,34 +11,34 @@
     {
         public EndpointConfigurationBuilder()
         {
-            configuration.EndpointMappings = new Dictionary<Type, Type>();
+            this.configuration.EndpointMappings = new Dictionary<Type, Type>();
         }
 
         public EndpointConfigurationBuilder AuditTo(Address addressOfAuditQueue)
         {
-            configuration.AddressOfAuditQueue = addressOfAuditQueue;
+            this.configuration.AddressOfAuditQueue = addressOfAuditQueue;
 
             return this;
         }
 
         public EndpointConfigurationBuilder CustomMachineName(string customMachineName)
         {
-            configuration.CustomMachineName = customMachineName;
+            this.configuration.CustomMachineName = customMachineName;
 
             return this;
         }
 
         public EndpointConfigurationBuilder CustomEndpointName(string customEndpointName)
         {
-            configuration.CustomEndpointName = customEndpointName;
+            this.configuration.CustomEndpointName = customEndpointName;
 
             return this;
         }
-        
+
 
         public EndpointConfigurationBuilder AppConfig(string path)
         {
-            configuration.AppConfigPath = path;
+            this.configuration.AppConfigPath = path;
 
             return this;
         }
@@ -45,40 +46,61 @@
 
         public EndpointConfigurationBuilder AddMapping<T>(Type endpoint)
         {
-            this.configuration.EndpointMappings.Add(typeof(T),endpoint);
+            this.configuration.EndpointMappings.Add(typeof(T), endpoint);
+
+            return this;
+        }
+
+        public EndpointConfigurationBuilder DefineCommandsAs(Func<Type, bool> predicate)
+        {
+            this.configuration.CommandsDefinition = predicate;
+
+            return this;
+        }
+
+        public EndpointConfigurationBuilder DefineEventsAs(Func<Type, bool> predicate)
+        {
+            this.configuration.EventsDefinition = predicate;
+
+            return this;
+        }
+
+        public EndpointConfigurationBuilder DefineMessagesAs(Func<Type, bool> predicate)
+        {
+            this.configuration.MessagesDefinition = predicate;
 
             return this;
         }
 
         EndpointConfiguration CreateScenario()
         {
-            configuration.BuilderType = GetType();
+            this.configuration.BuilderType = this.GetType();
 
             return this.configuration;
         }
 
         public EndpointConfigurationBuilder EndpointSetup<T>() where T : IEndpointSetupTemplate
         {
-            return EndpointSetup<T>(c => { });
+            return this.EndpointSetup<T>(c => { });
         }
 
-        public EndpointConfigurationBuilder EndpointSetup<T>(Action<Configure> configCustomization) where T: IEndpointSetupTemplate
+        public EndpointConfigurationBuilder EndpointSetup<T>(Action<Configure> configCustomization) where T : IEndpointSetupTemplate
         {
-            configuration.GetConfiguration = (settings,routingTable) =>
-                {
-                    var config = ((IEndpointSetupTemplate)Activator.CreateInstance<T>()).GetConfiguration(settings, configuration, new ScenarioConfigSource(configuration, routingTable));
+            this.configuration.GetConfiguration = (settings, routingTable) =>
+            {
+                var config = ((IEndpointSetupTemplate)Activator.CreateInstance<T>()).GetConfiguration(settings, this.configuration, new ScenarioConfigSource(this.configuration, routingTable));
 
-                    configCustomization(config);
+                configCustomization(config);
 
-                    return config;
-                };
+                return config;
+            };
 
             return this;
         }
 
         EndpointConfiguration IEndpointConfigurationFactory.Get()
         {
-            return CreateScenario();
+            return this.CreateScenario();
         }
 
         public class SubscriptionsSpy : IAuthorizeSubscriptions
@@ -91,9 +113,9 @@
             public bool AuthorizeSubscribe(string messageType, string clientEndpoint,
                                            IDictionary<string, string> headers)
             {
-                if (Interlocked.Increment(ref subscriptionsReceived) >= NumberOfSubscriptionsToWaitFor)
+                if (Interlocked.Increment(ref this.subscriptionsReceived) >= this.NumberOfSubscriptionsToWaitFor)
                 {
-                    manualResetEvent.Set();
+                    this.manualResetEvent.Set();
                 }
 
                 return true;
@@ -107,7 +129,7 @@
 
             public void Wait()
             {
-                if(!manualResetEvent.WaitOne(TimeSpan.FromSeconds(20)))
+                if (!this.manualResetEvent.WaitOne(TimeSpan.FromSeconds(20)))
                     throw new Exception("No subscription message was received");
 
             }
@@ -122,14 +144,21 @@
 
             action(config);
 
-            configuration.UserDefinedConfigSections[typeof (T)] = config;
-            
+            this.configuration.UserDefinedConfigSections[typeof(T)] = config;
+
             return this;
         }
 
         public EndpointConfigurationBuilder ExcludeType<T>()
         {
-            configuration.TypesToExclude.Add(typeof(T));
+            this.configuration.TypesToExclude.Add(typeof(T));
+
+            return this;
+        }
+
+        public EndpointConfigurationBuilder ScanningAssembly(Assembly assembly)
+        {
+            this.configuration.AssembliesToScan.Add(assembly);
 
             return this;
         }

@@ -1,7 +1,4 @@
-﻿using System.Runtime.Remoting;
-using System.Runtime.Remoting.Lifetime;
-
-namespace NServiceBus.Testing.Acceptance.Support
+﻿namespace NServiceBus.Testing.Acceptance.Support
 {
     using System;
     using System.Collections.Concurrent;
@@ -9,11 +6,13 @@ namespace NServiceBus.Testing.Acceptance.Support
     using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
+    using System.Runtime.Remoting;
+    using System.Runtime.Remoting.Lifetime;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
-    using NServiceBus.Testing.Acceptance.Customization;
+    using Customization;
 
     public class ScenarioRunner
     {
@@ -122,23 +121,27 @@ namespace NServiceBus.Testing.Acceptance.Support
             }
 
 
+            Console.Out.WriteLine("");
+            Console.Out.WriteLine("Context:");
+
+            foreach (var prop in runResult.ScenarioContext.GetType().GetProperties())
+            {
+                Console.Out.WriteLine("     - {0} = {1}", prop.Name, prop.GetValue(runResult.ScenarioContext, null));
+            }
+
+            Console.Out.WriteLine("");
+            
             if (runResult.Failed)
             {
                 Console.Out.WriteLine("Test failed: {0}", runResult.Exception);
 
-                Console.Out.WriteLine("Context:");
-
-                foreach (var prop in runResult.ScenarioContext.GetType().GetProperties())
-                {
-                    Console.Out.WriteLine("{0} = {1}", prop.Name, prop.GetValue(runResult.ScenarioContext,null));    
-                }
             }
             else
             {
                 Console.Out.WriteLine("Result: Successful - Duration: {0}", runResult.TotalTime);
-                Console.Out.WriteLine("------------------------------------------------------");
-
             }
+
+            Console.Out.WriteLine("------------------------------------------------------");
         }
 
         static RunResult PerformTestRun(IList<EndpointBehaviour> behaviorDescriptors, IList<IScenarioVerification> shoulds, RunDescriptor runDescriptor, Func<ScenarioContext, bool> done)
@@ -305,9 +308,6 @@ namespace NServiceBus.Testing.Acceptance.Support
             {
                 var endpointName = GetEndpointNameForRun(runDescriptor, behaviorDescriptor);
 
-
-
-
                 var runner = PrepareRunner(endpointName, behaviorDescriptor);
                 var result = runner.Instance.Initialize(runDescriptor, behaviorDescriptor, routingTable, endpointName);
 
@@ -340,7 +340,7 @@ namespace NServiceBus.Testing.Acceptance.Support
             var domainSetup = new AppDomainSetup
                 {
                     ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
-                    LoaderOptimization = LoaderOptimization.SingleDomain
+                    LoaderOptimization = LoaderOptimization.SingleDomain,
                 };
 
             var endpoint = ((IEndpointConfigurationFactory) Activator.CreateInstance(endpointBehaviour.EndpointBuilderType)).Get();
@@ -375,12 +375,12 @@ namespace NServiceBus.Testing.Acceptance.Support
         {
             get
             {
-                if (activeEndpoints == null)
-                    activeEndpoints = new List<string>();
+                if (this.activeEndpoints == null)
+                    this.activeEndpoints = new List<string>();
 
-                return activeEndpoints;
+                return this.activeEndpoints;
             }
-            set { activeEndpoints = value.ToList(); }
+            set { this.activeEndpoints = value.ToList(); }
         }
 
         IList<string> activeEndpoints;
