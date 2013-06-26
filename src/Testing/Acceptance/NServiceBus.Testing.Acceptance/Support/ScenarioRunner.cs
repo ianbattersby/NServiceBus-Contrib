@@ -123,13 +123,14 @@
 
             Console.Out.WriteLine("");
             Console.Out.WriteLine("Context:");
-            Console.Out.WriteLine("");
 
             foreach (var prop in runResult.ScenarioContext.GetType().GetProperties())
             {
                 Console.Out.WriteLine("     - {0} = {1}", prop.Name, prop.GetValue(runResult.ScenarioContext, null));
             }
 
+            Console.Out.WriteLine("");
+            
             if (runResult.Failed)
             {
                 Console.Out.WriteLine("Test failed: {0}", runResult.Exception);
