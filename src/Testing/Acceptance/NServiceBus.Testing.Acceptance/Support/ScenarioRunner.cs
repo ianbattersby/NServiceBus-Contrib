@@ -121,23 +121,26 @@
             }
 
 
+            Console.Out.WriteLine("");
+            Console.Out.WriteLine("Context:");
+            Console.Out.WriteLine("");
+
+            foreach (var prop in runResult.ScenarioContext.GetType().GetProperties())
+            {
+                Console.Out.WriteLine("     - {0} = {1}", prop.Name, prop.GetValue(runResult.ScenarioContext, null));
+            }
+
             if (runResult.Failed)
             {
                 Console.Out.WriteLine("Test failed: {0}", runResult.Exception);
 
-                Console.Out.WriteLine("Context:");
-
-                foreach (var prop in runResult.ScenarioContext.GetType().GetProperties())
-                {
-                    Console.Out.WriteLine("{0} = {1}", prop.Name, prop.GetValue(runResult.ScenarioContext,null));    
-                }
             }
             else
             {
                 Console.Out.WriteLine("Result: Successful - Duration: {0}", runResult.TotalTime);
-                Console.Out.WriteLine("------------------------------------------------------");
-
             }
+
+            Console.Out.WriteLine("------------------------------------------------------");
         }
 
         static RunResult PerformTestRun(IList<EndpointBehaviour> behaviorDescriptors, IList<IScenarioVerification> shoulds, RunDescriptor runDescriptor, Func<ScenarioContext, bool> done)
