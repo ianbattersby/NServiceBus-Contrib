@@ -11,19 +11,16 @@
 
         public void SerializationFailedForMessage(TransportMessage message, Exception e)
         {
-            this.Context.HadException = true;
             this.Context.AddException(e);
         }
 
         public void ProcessingAlwaysFailsForMessage(TransportMessage message, Exception e)
         {
-            this.Context.HadException = true;
             this.Context.AddException(e);
         }
 
         public void Init(Address address)
         {
-            this.Context.HadException = false;
         }
     }
 }

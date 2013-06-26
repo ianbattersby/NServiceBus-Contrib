@@ -19,7 +19,7 @@
 
         public int UnitOfWorkCount { get; set; }
 
-        public bool HadException { get; set; }
+        public int CallbackCount { get; set; }
 
         public IEnumerable<Exception> Exceptions
         {

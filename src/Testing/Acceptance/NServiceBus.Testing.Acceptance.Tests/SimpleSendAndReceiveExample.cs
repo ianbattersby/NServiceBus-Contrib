@@ -1,6 +1,7 @@
 ﻿namespace NServiceBus.Testing.Acceptance.Tests
 {
     using System;
+    using System.Linq;
 
     using NServiceBus.Config;
     using NServiceBus.Config.ConfigurationSource;
@@ -25,21 +26,21 @@
         {
             Scenario.Define()
                 .WithEndpoint<PizzaService>()
-                .WithEndpoint<WebServer>(builder => 
+                .WithEndpoint<WebServer>(builder =>
                     builder.Given((bus, context) => bus.Send(
                         new OrderPizzaCommand
                           {
                               Id = Guid.NewGuid(),
                               CustomerName = "Mr Wizard",
                               PizzaName = "Ham & Cheese Special"
-                          })))
-                .Done(context => context.UnitOfWorkCount == 2)  // Meh, not nice but won't pollute production with 'Context'.
+                          }).Register(r => context.CallbackCount++)))
+                .Done(context => context.UnitOfWorkCount == 1)  // Meh, not nice but won't pollute production with 'Context'.
                 .Should(context =>
                     {
-                        Assert.False(context.HadException);
+                        Assert.AreEqual(0, context.Exceptions.Count());
 
-                        Assert.True(context.UnitOfWorkStarted);
-                        Assert.True(context.UnitOfWorkEnded);
+                        //Assert.AreEqual(1, context.CallbackCount);
+                        Assert.AreEqual(1, context.UnitOfWorkCount);
                     })
                 .Run();
         }
