@@ -11,13 +11,13 @@
         readonly List<string> excludes = new List<string>();
         public RunDescriptorsBuilder For<T>(params RunDescriptor[] runDescriptorsToExclude) where T : ScenarioDescriptor
         {
-            excludes.AddRange(runDescriptorsToExclude
+            this.excludes.AddRange(runDescriptorsToExclude
                 .Where(r=>r != null)
                 .Select(r =>r.Key.ToLowerInvariant()).ToArray());
 
             var sd = Activator.CreateInstance<T>() as ScenarioDescriptor;
 
-            return For(sd.ToArray());
+            return this.For(sd.ToArray());
         }
 
         public RunDescriptorsBuilder For(params RunDescriptor[] descriptorsToAdd)
@@ -26,19 +26,19 @@
 
             if (!toAdd.Any())
             {
-                emptyPermutationFound = true;
+                this.emptyPermutationFound = true;
             }
 
-            if (!descriptors.Any())
+            if (!this.descriptors.Any())
             {
-                descriptors = toAdd;
+                this.descriptors = toAdd;
                 return this;
             }
 
 
             var result = new List<RunDescriptor>();
 
-            foreach (var existingDescriptor in descriptors)
+            foreach (var existingDescriptor in this.descriptors)
             {
                 foreach (var descriptorToAdd in toAdd)
                 {
@@ -49,7 +49,7 @@
             }
 
 
-            descriptors = result;
+            this.descriptors = result;
 
             return this;
         }
@@ -58,15 +58,15 @@
         {
             //if we have found a empty permutation this means that we shouldn't run any permutations. This happens when a test is specified to run for a given key
             // but that key is not avaiable. Eg running tests for sql server but the sql transport isn't available
-            if (emptyPermutationFound)
+            if (this.emptyPermutationFound)
             {
                 return new List<RunDescriptor>();
             }
 
             var environmentExcludes = GetEnvironmentExcludes();
 
-            var activeDescriptors = descriptors.Where(d =>
-                !excludes.Any(e => d.Key.ToLower().Contains(e)) &&
+            var activeDescriptors = this.descriptors.Where(d =>
+                !this.excludes.Any(e => d.Key.ToLower().Contains(e)) &&
                 !environmentExcludes.Any(e => d.Key.ToLower().Contains(e))
                 ).ToList();
 

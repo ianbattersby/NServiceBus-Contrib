@@ -1,4 +1,9 @@
-gem 'albacore', '<= 0.1.5'
+if defined?(GLOBAL_BUILD_DIR) then
+	gem 'albacore', '<= 0.1.5'
+else
+	gem 'albacore', '>= 0.3.0'
+end
+
 require 'albacore'
 require 'fileutils'
 
@@ -6,6 +11,8 @@ COMPILE_TARGET = "debug" unless defined?(COMPILE_TARGET)
 PLATFORM = "Any CPU" unless defined?(PLATFORM)
 
 build_dir = "#{File.dirname(__FILE__)}/build"
+nuspec_path = "#{File.dirname(__FILE__)}/packaging/nuspec"
+nuget_command = "#{File.dirname(__FILE__)}/.nuget/NuGet.exe"
 
 # Change these two to match your solution and project
 solution_file = "NServiceBus.Testing.Acceptance.sln"
@@ -26,21 +33,39 @@ msbuild :compile do |msb|
 	msb.properties :configuration => COMPILE_TARGET, :platform => PLATFORM
 	msb.targets :Clean, :Build
 	msb.solution = File.dirname(__FILE__) + "/#{solution_file}" 
-	msb.path_to_command = File.join(ENV['windir'], 'Microsoft.NET', 'Framework', 'v4.0.30319', 'MSBuild.exe') 
+	if defined?(GLOBAL_BUILD_DIR) then
+		msb.path_to_command = File.join(ENV['windir'], 'Microsoft.NET', 'Framework', 'v4.0.30319', 'MSBuild.exe') 
+	else
+		msb.command = File.join(ENV['windir'], 'Microsoft.NET', 'Framework', 'v4.0.30319', 'MSBuild.exe') 
+	end
 end
 
 task :build => [:clean, :compile] do  
-	
 	if defined?(GLOBAL_BUILD_DIR) then
 		copyOutputFiles File.dirname(__FILE__)+ "/#{project_directory}/bin/#{COMPILE_TARGET}", "#{project_directory}*.{dll,exe,config,pdb}", "#{GLOBAL_BUILD_DIR}/#{project_directory}"
 	else
 		copyOutputFiles File.dirname(__FILE__)+ "/#{project_directory}/bin/#{COMPILE_TARGET}", "#{project_directory}*.{dll,exe,config,pdb}", build_dir
+		
+		packageNugets nuget_command, nuspec_path, build_dir
 	end
-end 
+end
 
 def copyOutputFiles(fromDir, filePattern, outDir)
   mkdir outDir unless File.exists? outDir
   Dir.glob(File.join(fromDir, filePattern)){|file| 		
 	copy(file, outDir) if File.file?(file)
   } 
+end
+
+def packageNugets(nuget_command, nuspec_path, output_path)
+    nuspecs = FileList["#{nuspec_path}/**/*.nuspec"]
+
+    nuspecs.each do |nuspec|      
+        nuget = NuGetPack.new
+        nuget.command = nuget_command
+        nuget.nuspec = nuspec
+        nuget.output = output_path
+        nuget.base_folder = nuspec_path
+        nuget.execute
+    end
 end

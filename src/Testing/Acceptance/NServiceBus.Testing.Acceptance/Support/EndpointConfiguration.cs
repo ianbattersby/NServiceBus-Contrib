@@ -3,12 +3,14 @@
     using System;
     using System.Collections.Generic;
 
+    using NServiceBus;
+
     public class EndpointConfiguration
     {
         public EndpointConfiguration()
         {
-            UserDefinedConfigSections = new Dictionary<Type, object>();
-            TypesToExclude = new List<Type>();
+            this.UserDefinedConfigSections = new Dictionary<Type, object>();
+            this.TypesToExclude = new List<Type>();
         }
 
         public IDictionary<Type, Type> EndpointMappings { get; set; }
@@ -21,11 +23,11 @@
         {
             get
             {
-                if (!string.IsNullOrEmpty(CustomEndpointName))
-                    return CustomEndpointName;
-                return endpointName;
+                if (!string.IsNullOrEmpty(this.CustomEndpointName))
+                    return this.CustomEndpointName;
+                return this.endpointName;
             }
-            set { endpointName = value; }
+            set { this.endpointName = value; }
         }
 
         public Type BuilderType { get; set; }

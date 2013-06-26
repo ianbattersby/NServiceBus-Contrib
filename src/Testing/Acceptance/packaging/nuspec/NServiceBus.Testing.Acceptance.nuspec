@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>NServiceBus.Testing.Acceptance</id>
+    <version>0.0.1-alpha</version>
+    <authors>NServiceBus Ltd</authors>
+    <owners>nservicebus</owners>
+    <copyright>Copyright (C) NServiceBus 2010-2013</copyright>
+    <licenseUrl>http://particular.net/licensing</licenseUrl>
+    <projectUrl>http://particular.net/</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Testing support for integrated acceptance testing.</description>
+    <summary>The most popular open-source service bus for .net</summary>
+    <tags>nservicebus testing</tags>
+    <dependencies>
+      <dependency id="NServiceBus" version="4.0.0" />
+      <dependency id="NServiceBus.Autofac" version="4.0.0" />
+      <dependency id="NServiceBus.CastleWindsor" version="4.0.0" />
+      <dependency id="NServiceBus.Interfaces" version="4.0.0" />
+      <dependency id="NServiceBus.NHibernate" version="4.0.0" />
+      <dependency id="NServiceBus.Ninject" version="4.0.0" />
+      <dependency id="NServiceBus.Spring" version="4.0.0" />
+      <dependency id="NServiceBus.StructureMap" version="4.0.0" />
+      <dependency id="NServiceBus.Unity" version="4.0.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\..\build\NServiceBus.Testing.Acceptance.dll" target="lib\net40" />
+    <file src="..\..\build\NServiceBus.Testing.Acceptance.*db" target="lib\net40" />
+    <file src="..\..\NServiceBus.Testing.Acceptance\**\*.cs" target="src" />
+  </files>
+</package> 

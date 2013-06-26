@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Configuration;
+
     using NServiceBus.Config;
     using NServiceBus.Config.ConfigurationSource;
 
@@ -21,8 +22,8 @@
         {
             var type = typeof (T);
 
-            if (configuration.UserDefinedConfigSections.ContainsKey(type))
-                return configuration.UserDefinedConfigSections[type] as T;
+            if (this.configuration.UserDefinedConfigSections.ContainsKey(type))
+                return this.configuration.UserDefinedConfigSections[type] as T;
 
 
             if (type == typeof (MessageForwardingInCaseOfFaultConfig))
@@ -34,8 +35,8 @@
             if (type == typeof(UnicastBusConfig))
                 return new UnicastBusConfig
                     {
-                        ForwardReceivedMessagesTo = configuration.AddressOfAuditQueue != null ? configuration.AddressOfAuditQueue.ToString() : null,
-                        MessageEndpointMappings = GenerateMappings()
+                        ForwardReceivedMessagesTo = this.configuration.AddressOfAuditQueue != null ? this.configuration.AddressOfAuditQueue.ToString() : null,
+                        MessageEndpointMappings = this.GenerateMappings()
                     }as T;
 
 
@@ -54,7 +55,7 @@
         {
             var mappings = new MessageEndpointMappingCollection();
 
-            foreach (var templateMapping in configuration.EndpointMappings)
+            foreach (var templateMapping in this.configuration.EndpointMappings)
             {
                 var messageType = templateMapping.Key;
                 var endpoint = templateMapping.Value;
@@ -63,7 +64,7 @@
                     {
                         AssemblyName = messageType.Assembly.FullName,
                         TypeFullName = messageType.FullName,
-                        Endpoint = routingTable[endpoint]
+                        Endpoint = this.routingTable[endpoint]
                     });
             }
 

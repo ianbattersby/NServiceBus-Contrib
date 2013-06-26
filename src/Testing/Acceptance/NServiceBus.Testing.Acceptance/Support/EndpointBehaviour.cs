@@ -1,22 +1,22 @@
 ﻿namespace NServiceBus.Testing.Acceptance.Support
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Text;
     using System.Threading;
 
-    using NServiceBus.Testing.Acceptance.Customization;
+    using Customization;
+
+    using NServiceBus;
 
     [Serializable]
     public class EndpointBehaviour : MarshalByRefObject
     {
         public EndpointBehaviour(Type builderType)
         {
-            EndpointBuilderType = builderType;
-            EndpointName = Conventions.EndpointNamingConvention(builderType);
-            CustomConfig = new List<Action<Configure>>();
+            this.EndpointBuilderType = builderType;
+            this.EndpointName = Conventions.EndpointNamingConvention(builderType);
+            this.CustomConfig = new List<Action<Configure>>();
         }
 
         public string EndpointName { get; private set; }
@@ -37,20 +37,20 @@
     {
         public GivenDefinition(Action<IBus> action)
         {
-            givenAction2 = action;
+            this.givenAction2 = action;
         }
 
         public GivenDefinition(Action<IBus, TContext> action)
         {
-            givenAction = action;
+            this.givenAction = action;
         }
 
         public Action<IBus> GetAction(ScenarioContext context)
         {
-            if (givenAction2 != null)
-                return bus => givenAction2(bus);
+            if (this.givenAction2 != null)
+                return bus => this.givenAction2(bus);
 
-            return bus => givenAction(bus, (TContext)context);
+            return bus => this.givenAction(bus, (TContext)context);
         }
 
         readonly Action<IBus, TContext> givenAction;
@@ -63,41 +63,41 @@
     {
         public WhenDefinition(Predicate<TContext> condition, Action<IBus> action)
         {
-            id = Guid.NewGuid();
+            this.id = Guid.NewGuid();
             this.condition = condition;
-            busAction = action;
+            this.busAction = action;
         }
 
         public WhenDefinition(Predicate<TContext> condition, Action<IBus, TContext> actionWithContext)
         {
-            id = Guid.NewGuid();
+            this.id = Guid.NewGuid();
             this.condition = condition;
-            busAndContextAction = actionWithContext;
+            this.busAndContextAction = actionWithContext;
         }
 
-        public Guid Id { get { return id; } }
+        public Guid Id { get { return this.id; } }
 
         public bool ExecuteAction(ScenarioContext context, IBus bus)
         {
             var c = context as TContext;
 
-            if (!condition(c))
+            if (!this.condition(c))
             {
                 return false;
             }
 
 
-            if (busAction != null)
+            if (this.busAction != null)
             {
-                busAction(bus);
+                this.busAction(bus);
             }
             else
             {
-                busAndContextAction(bus, c);
+                this.busAndContextAction(bus, c);
           
             }
 
-            Debug.WriteLine("Condition {0} has fired - Thread: {1} AppDomain: {2}", id, Thread.CurrentThread.ManagedThreadId,AppDomain.CurrentDomain.FriendlyName);
+            Debug.WriteLine("Condition {0} has fired - Thread: {1} AppDomain: {2}", this.id, Thread.CurrentThread.ManagedThreadId,AppDomain.CurrentDomain.FriendlyName);
 
             return true;
         }

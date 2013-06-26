@@ -10,7 +10,7 @@
     public abstract class ScenarioContext : ContextBoundObject
     {
         public event EventHandler ContextPropertyChanged;
-      
+
         [AttributeUsage(AttributeTargets.Class)]
         sealed class InterceptAttribute : ContextAttribute, IContributeObjectSink
         {
@@ -48,18 +48,17 @@
                 {
                     var method = call.MethodName;
 
-                  
-                    if (Target.ContextPropertyChanged != null && method.StartsWith("set"))
+
+                    if (this.Target.ContextPropertyChanged != null && method.StartsWith("set"))
                     {
-                        Target.ContextPropertyChanged(Target, EventArgs.Empty);
+                        this.Target.ContextPropertyChanged(this.Target, EventArgs.Empty);
                     }
                 }
 
-                return NextSink.SyncProcessMessage(msg);
+                return this.NextSink.SyncProcessMessage(msg);
             }
         }
 
         public bool EndpointsStarted { get; set; }
-
     }
 }
