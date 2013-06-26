@@ -11,7 +11,7 @@ namespace NServiceBus.Testing.Acceptance.Customization
             EndpointNamingConvention = t => "acceptance." + t.Name.Replace("+", "-");
         }
 
-        public static Func<RunDescriptor> DefaultRunDescriptor = () => new RunDescriptor {Key = "Default"};
+        public static Func<RunDescriptor> DefaultRunDescriptor = () => new RunDescriptor { Key = "Default" };
 
         public static Func<Type, string> EndpointNamingConvention { get; set; }
 

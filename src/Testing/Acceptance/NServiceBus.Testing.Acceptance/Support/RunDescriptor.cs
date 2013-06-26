@@ -32,9 +32,18 @@
 
         public RunDescriptor(RunDescriptor template)
         {
-            this.Settings = template.Settings.ToDictionary(entry => entry.Key,
-                                                      entry => entry.Value);
-            this.Key = template.Key;
+            InitializeWithDescriptor(template);
+        }
+
+        public RunDescriptor(params RunDescriptor[] templates)
+        {
+            for (var i = 0; i < templates.Length; i++)
+            {
+                if (i == 0)
+                    this.InitializeWithDescriptor(templates[i]);
+                else
+                    this.Merge(templates[i]);
+            }
         }
 
         public string Key { get; set; }
@@ -55,6 +64,13 @@
             {
                 this.Settings[setting.Key] = setting.Value;
             }
+        }
+
+        private void InitializeWithDescriptor(RunDescriptor descriptor)
+        {
+            this.Settings = descriptor.Settings.ToDictionary(entry => entry.Key,
+                                                      entry => entry.Value);
+            this.Key = descriptor.Key;
         }
     }
 }

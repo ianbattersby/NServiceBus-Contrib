@@ -6,6 +6,7 @@
     using NServiceBus.Config.ConfigurationSource;
     using NServiceBus.Testing.Acceptance.Customization;
     using NServiceBus.Testing.Acceptance.EndpointTemplates;
+    using NServiceBus.Testing.Acceptance.ScenarioDescriptors;
     using NServiceBus.Testing.Acceptance.Support;
     using NServiceBus.Testing.Acceptance.Tests.Commands;
 
@@ -16,7 +17,7 @@
         [SetUp]
         public void SetupConventions()
         {
-            Conventions.DefaultRunDescriptor = () => ScenarioDescriptors.Transports.Msmq;
+            Conventions.DefaultRunDescriptor = () => new RunDescriptor(Transports.Msmq, Builders.StructureMap);
         }
 
         [Test]
@@ -88,7 +89,7 @@
                     .DefineEndpointName(endpointConfiguration.EndpointName)
                     .DefiningCommandsAs(t => t.Namespace != null && t.Namespace.EndsWith("Tests.Commands"))
                     .CustomConfigurationSource(configSource)
-                    .DefaultBuilder()
+                    .DefineBuilder(runDescriptor.Settings.GetOrNull("Builder"))
                     .UseNHibernateSagaPersister()
                     .UseNHibernateTimeoutPersister()
                     .UseNHibernateSubscriptionPersister()
