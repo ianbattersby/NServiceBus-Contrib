@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
 
     using NServiceBus;
 
@@ -11,9 +12,12 @@
         {
             this.UserDefinedConfigSections = new Dictionary<Type, object>();
             this.TypesToExclude = new List<Type>();
+            this.AssembliesToScan = new List<Assembly>();
         }
 
         public IDictionary<Type, Type> EndpointMappings { get; set; }
+
+        public IList<Assembly> AssembliesToScan { get; set; } 
 
         public IList<Type> TypesToExclude { get; set; }
 
@@ -43,5 +47,11 @@
         public string CustomEndpointName { get; set; }
 
         string endpointName;
+
+        public Func<Type, bool> CommandsDefinition { get; set; }
+
+        public Func<Type, bool> EventsDefinition { get; set; }
+
+        public Func<Type, bool> MessagesDefinition { get; set; } 
     }
 }

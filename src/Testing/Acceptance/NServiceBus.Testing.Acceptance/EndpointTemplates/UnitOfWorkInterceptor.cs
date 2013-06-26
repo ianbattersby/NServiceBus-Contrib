@@ -22,6 +22,7 @@
         public void End(Exception ex = null)
         {
             this.Context.UnitOfWorkEnded = true;
+            this.Context.UnitOfWorkCount++;
         }
     }
 }

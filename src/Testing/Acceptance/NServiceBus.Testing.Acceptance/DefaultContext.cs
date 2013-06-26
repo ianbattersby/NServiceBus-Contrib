@@ -17,6 +17,8 @@
 
         public bool UnitOfWorkEnded { get; set; }
 
+        public int UnitOfWorkCount { get; set; }
+
         public bool HadException { get; set; }
 
         public IEnumerable<Exception> Exceptions

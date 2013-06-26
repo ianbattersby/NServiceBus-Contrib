@@ -22,7 +22,7 @@
             var types = GetTypesToUse(endpointConfiguration);
 
             var transportToUse = settings.GetOrNull("Transport");
-            
+
             Configure.Features.Enable<Features.Sagas>();
             SettingsHolder.SetDefault("ScaleOut.UseSingleBrokerQueue", true);
 
@@ -33,6 +33,15 @@
                             .DefineSerializer(settings.GetOrNull("Serializer"))
                             .DefineTransport(settings)
                             .DefineSagaPersister(settings.GetOrNull("SagaPersister"));
+
+            if (endpointConfiguration.CommandsDefinition != null)
+                config.DefiningCommandsAs(endpointConfiguration.CommandsDefinition);
+
+            if (endpointConfiguration.EventsDefinition != null)
+                config.DefiningCommandsAs(endpointConfiguration.EventsDefinition);
+
+            if (endpointConfiguration.MessagesDefinition != null)
+                config.DefiningCommandsAs(endpointConfiguration.MessagesDefinition);
 
             if (transportToUse == null || 
                 transportToUse.Contains("Msmq") || 
@@ -53,17 +62,17 @@
 
         static IEnumerable<Type> GetTypesToUse(EndpointConfiguration endpointConfiguration)
         {
-            var assemblies = AssemblyScanner.GetScannableAssemblies();
+            var assemblies = endpointConfiguration.AssembliesToScan.Count > 0 ?
+                endpointConfiguration.AssembliesToScan : AssemblyScanner.GetScannableAssemblies().Assemblies;
 
-            var types = assemblies.Assemblies
-                                    //exclude all test types by default
-                                  .Where(a => a != Assembly.GetExecutingAssembly())
-                                  .SelectMany(a => a.GetTypes());
+            var types = assemblies
+                            .Where(a => a != Assembly.GetExecutingAssembly())
+                            .SelectMany(a => a.GetTypes());
 
 
             types = types.Union(GetNestedTypeRecursive(endpointConfiguration.BuilderType.DeclaringType));
 
-            return types.Where(t=>!endpointConfiguration.TypesToExclude.Contains(t)).ToList();
+            return types.Where(t => !endpointConfiguration.TypesToExclude.Contains(t)).ToList();
         }
 
         static IEnumerable<Type> GetNestedTypeRecursive(Type rootType)

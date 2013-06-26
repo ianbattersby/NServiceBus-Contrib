@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
     using System.Threading;
 
     using Support;
@@ -46,6 +47,27 @@
         public EndpointConfigurationBuilder AddMapping<T>(Type endpoint)
         {
             this.configuration.EndpointMappings.Add(typeof(T), endpoint);
+
+            return this;
+        }
+
+        public EndpointConfigurationBuilder DefineCommandsAs(Func<Type, bool> predicate)
+        {
+            this.configuration.CommandsDefinition = predicate;
+
+            return this;
+        }
+
+        public EndpointConfigurationBuilder DefineEventsAs(Func<Type, bool> predicate)
+        {
+            this.configuration.EventsDefinition = predicate;
+
+            return this;
+        }
+
+        public EndpointConfigurationBuilder DefineMessagesAs(Func<Type, bool> predicate)
+        {
+            this.configuration.MessagesDefinition = predicate;
 
             return this;
         }
@@ -130,6 +152,13 @@
         public EndpointConfigurationBuilder ExcludeType<T>()
         {
             this.configuration.TypesToExclude.Add(typeof(T));
+
+            return this;
+        }
+
+        public EndpointConfigurationBuilder ScanningAssembly(Assembly assembly)
+        {
+            this.configuration.AssembliesToScan.Add(assembly);
 
             return this;
         }
