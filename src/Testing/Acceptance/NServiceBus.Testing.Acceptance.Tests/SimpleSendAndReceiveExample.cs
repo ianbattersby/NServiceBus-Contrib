@@ -30,7 +30,6 @@
                     builder.Given((bus, context) => bus.Send(
                         new OrderPizzaCommand
                           {
-                              Id = Guid.NewGuid(),
                               CustomerName = "Mr Wizard",
                               PizzaName = "Ham & Cheese Special"
                           }).Register(r => context.CallbackCount++)))

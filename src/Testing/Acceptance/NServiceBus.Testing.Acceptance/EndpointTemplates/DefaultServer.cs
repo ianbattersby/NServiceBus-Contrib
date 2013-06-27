@@ -56,6 +56,7 @@
 
             config.Configurer.ConfigureComponent<FailureHandler>(DependencyLifecycle.SingleInstance);
             config.Configurer.ConfigureComponent<UnitOfWorkInterceptor>(DependencyLifecycle.InstancePerCall);
+            config.Configurer.ConfigureComponent<SubscriptionsInterceptor>(DependencyLifecycle.InstancePerCall);
 
             return config.UnicastBus();
         }

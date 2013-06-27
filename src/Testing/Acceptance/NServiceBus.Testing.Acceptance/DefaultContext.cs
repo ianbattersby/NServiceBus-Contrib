@@ -17,6 +17,10 @@
 
         public int UnitOfWorkEndedCount { get; set; }
 
+        public int SubscriptionsCount { get; set; }
+
+        public int UnsubscriptionsCount { get; set; }
+
         public int CallbackCount { get; set; }
 
         public IEnumerable<Exception> Exceptions
