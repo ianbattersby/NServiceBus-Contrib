@@ -34,13 +34,13 @@
                               CustomerName = "Mr Wizard",
                               PizzaName = "Ham & Cheese Special"
                           }).Register(r => context.CallbackCount++)))
-                .Done(context => context.UnitOfWorkCount == 1)  // Meh, not nice but won't pollute production with 'Context'.
+                .Done(context => context.UnitOfWorkEndedCount == 1)  // Meh, not nice but won't pollute production with 'Context'.
                 .Should(context =>
                     {
                         Assert.AreEqual(0, context.Exceptions.Count());
 
                         //Assert.AreEqual(1, context.CallbackCount);
-                        Assert.AreEqual(1, context.UnitOfWorkCount);
+                        Assert.AreEqual(1, context.UnitOfWorkEndedCount);
                     })
                 .Run();
         }

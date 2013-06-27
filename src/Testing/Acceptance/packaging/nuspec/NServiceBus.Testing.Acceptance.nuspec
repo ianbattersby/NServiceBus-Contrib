@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>NServiceBus.Testing.Acceptance</id>
-    <version>0.0.1-alpha</version>
+    <version>0.0.3-unstable3205</version>
     <authors>NServiceBus Ltd</authors>
     <owners>nservicebus</owners>
     <copyright>Copyright (C) NServiceBus 2010-2013</copyright>
@@ -13,15 +13,15 @@
     <summary>The most popular open-source service bus for .net</summary>
     <tags>nservicebus testing</tags>
     <dependencies>
-      <dependency id="NServiceBus" version="4.0.0" />
-      <dependency id="NServiceBus.Autofac" version="4.0.0" />
-      <dependency id="NServiceBus.CastleWindsor" version="4.0.0" />
-      <dependency id="NServiceBus.Interfaces" version="4.0.0" />
-      <dependency id="NServiceBus.NHibernate" version="4.0.0" />
-      <dependency id="NServiceBus.Ninject" version="4.0.0" />
-      <dependency id="NServiceBus.Spring" version="4.0.0" />
-      <dependency id="NServiceBus.StructureMap" version="4.0.0" />
-      <dependency id="NServiceBus.Unity" version="4.0.0" />
+      <dependency id="NServiceBus" version="4.0.0-unstable3205" />
+      <dependency id="NServiceBus.Autofac" version="4.0.0-unstable3205" />
+      <dependency id="NServiceBus.CastleWindsor" version="4.0.0-unstable3205" />
+      <dependency id="NServiceBus.Interfaces" version="4.0.0-unstable3205" />
+      <dependency id="NServiceBus.NHibernate" version="4.0.0-unstable3205" />
+      <dependency id="NServiceBus.Ninject" version="4.0.0-unstable3205" />
+      <dependency id="NServiceBus.Spring" version="4.0.0-unstable3205" />
+      <dependency id="NServiceBus.StructureMap" version="4.0.0-unstable3205" />
+      <dependency id="NServiceBus.Unity" version="4.0.0-unstable3205" />
     </dependencies>
   </metadata>
   <files>

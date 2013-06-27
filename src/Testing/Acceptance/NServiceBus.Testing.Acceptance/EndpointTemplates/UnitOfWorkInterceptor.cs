@@ -16,13 +16,12 @@
 
         public void Begin()
         {
-            this.Context.UnitOfWorkStarted = true;
+            this.Context.UnitOfWorkEndedCount++;
         }
 
         public void End(Exception ex = null)
         {
-            this.Context.UnitOfWorkEnded = true;
-            this.Context.UnitOfWorkCount++;
+            this.Context.UnitOfWorkEndedCount++;
         }
     }
 }

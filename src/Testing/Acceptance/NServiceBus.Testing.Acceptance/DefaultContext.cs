@@ -13,11 +13,9 @@
             this.exceptions = new ExceptionList();
         }
 
-        public bool UnitOfWorkStarted { get; set; }
+        public int UnitOfWorkStartedCount { get; set; }
 
-        public bool UnitOfWorkEnded { get; set; }
-
-        public int UnitOfWorkCount { get; set; }
+        public int UnitOfWorkEndedCount { get; set; }
 
         public int CallbackCount { get; set; }
 
