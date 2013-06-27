@@ -16,7 +16,7 @@
 
         public void Begin()
         {
-            this.Context.UnitOfWorkEndedCount++;
+            this.Context.UnitOfWorkStartedCount++;
         }
 
         public void End(Exception ex = null)
