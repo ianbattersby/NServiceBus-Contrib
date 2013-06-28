@@ -6,21 +6,27 @@
 
     public class SubscriptionsInterceptor : IManageSubscriptions
     {
-        public DefaultContext Context { get; set; }
+        public ScenarioContext Context { get; set; }
 
         public void Init()
         {
-            Configure.Instance.Configurer.ConfigureComponent<SubscriptionsInterceptor>(DependencyLifecycle.InstancePerCall);
+            Configure.Instance.Configurer.ConfigureComponent<SubscriptionsInterceptor>(DependencyLifecycle.SingleInstance);
         }
 
         public void Subscribe(Type eventType, Address publisherAddress)
         {
-            this.Context.SubscriptionsCount++;
+            if (typeof(DefaultContext).IsAssignableFrom(this.Context.GetType()))
+            {
+                ((DefaultContext)this.Context).SubscriptionsCount++;
+            }
         }
 
         public void Unsubscribe(Type eventType, Address publisherAddress)
         {
-            this.Context.UnsubscriptionsCount++;
+            if (typeof(DefaultContext).IsAssignableFrom(this.Context.GetType()))
+            {
+                ((DefaultContext)this.Context).UnsubscriptionsCount++;
+            }
         }
     }
 }

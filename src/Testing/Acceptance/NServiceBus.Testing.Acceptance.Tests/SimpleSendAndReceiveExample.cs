@@ -1,6 +1,7 @@
 ﻿namespace NServiceBus.Testing.Acceptance.Tests
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     using NServiceBus.Config;
@@ -24,7 +25,7 @@
         [Test]
         public void CanSendValidCommand()
         {
-            Scenario.Define()
+            Scenario.Define<DefaultContext>()
                 .WithEndpoint<PizzaService>()
                 .WithEndpoint<WebServer>(builder =>
                     builder.Given((bus, context) => bus.Send(

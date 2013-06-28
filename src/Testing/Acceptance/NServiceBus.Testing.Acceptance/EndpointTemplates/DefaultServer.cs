@@ -38,10 +38,10 @@
                 config.DefiningCommandsAs(endpointConfiguration.CommandsDefinition);
 
             if (endpointConfiguration.EventsDefinition != null)
-                config.DefiningCommandsAs(endpointConfiguration.EventsDefinition);
+                config.DefiningEventsAs(endpointConfiguration.EventsDefinition);
 
             if (endpointConfiguration.MessagesDefinition != null)
-                config.DefiningCommandsAs(endpointConfiguration.MessagesDefinition);
+                config.DefiningMessagesAs(endpointConfiguration.MessagesDefinition);
 
             if (transportToUse == null || 
                 transportToUse.Contains("Msmq") || 
@@ -55,8 +55,8 @@
                 config.DefineSubscriptionStorage(settings.GetOrNull("SubscriptionStorage"));
 
             config.Configurer.ConfigureComponent<FailureHandler>(DependencyLifecycle.SingleInstance);
-            config.Configurer.ConfigureComponent<UnitOfWorkInterceptor>(DependencyLifecycle.InstancePerCall);
-            config.Configurer.ConfigureComponent<SubscriptionsInterceptor>(DependencyLifecycle.InstancePerCall);
+            config.Configurer.ConfigureComponent<UnitOfWorkInterceptor>(DependencyLifecycle.SingleInstance);
+            config.Configurer.ConfigureComponent<SubscriptionsInterceptor>(DependencyLifecycle.SingleInstance);
 
             return config.UnicastBus();
         }

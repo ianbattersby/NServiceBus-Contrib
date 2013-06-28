@@ -10,9 +10,9 @@
 
     public class Scenario
     {
-        public static IScenarioWithEndpointBehavior<DefaultContext> Define()
+        public static IScenarioWithEndpointBehavior<ScenarioContext> Define()
         {
-            return Define<DefaultContext>();
+            return Define<ScenarioContext>();
         }
 
         public static IScenarioWithEndpointBehavior<T> Define<T>() where T : ScenarioContext

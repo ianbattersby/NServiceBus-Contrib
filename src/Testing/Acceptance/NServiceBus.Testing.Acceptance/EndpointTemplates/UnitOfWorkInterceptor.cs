@@ -7,21 +7,27 @@
 
     public class UnitOfWorkInterceptor : IManageUnitsOfWork
     {
-        public DefaultContext Context { get; set; }
+        public ScenarioContext Context { get; set; }
 
         public void Init()
         {
-            Configure.Instance.Configurer.ConfigureComponent<UnitOfWorkInterceptor>(DependencyLifecycle.InstancePerCall);
+            Configure.Instance.Configurer.ConfigureComponent<UnitOfWorkInterceptor>(DependencyLifecycle.SingleInstance);
         }
 
         public void Begin()
         {
-            this.Context.UnitOfWorkStartedCount++;
+            if (typeof(DefaultContext).IsAssignableFrom(this.Context.GetType()))
+            {
+                ((DefaultContext)this.Context).UnitOfWorkStartedCount++;
+            }
         }
 
         public void End(Exception ex = null)
         {
-            this.Context.UnitOfWorkEndedCount++;
+            if (typeof(DefaultContext).IsAssignableFrom(this.Context.GetType()))
+            {
+                ((DefaultContext)this.Context).UnitOfWorkEndedCount++;
+            }
         }
     }
 }

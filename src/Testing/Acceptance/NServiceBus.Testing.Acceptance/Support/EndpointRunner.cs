@@ -41,11 +41,14 @@
                 endpointBehaviour.CustomConfig.ForEach(customAction => customAction(this.config));
                 this.config = this.configuration.GetConfiguration(run, routingTable);
 
-
-
                 if (this.scenarioContext != null)
                 {
-                    this.config.Configurer.RegisterSingleton(this.scenarioContext.GetType(), this.scenarioContext);
+                    if (this.scenarioContext.GetType() != typeof(ScenarioContext))
+                    {
+                        this.config.Configurer.RegisterSingleton(this.scenarioContext.GetType(), this.scenarioContext);
+                    }
+
+                    this.config.Configurer.RegisterSingleton(typeof(ScenarioContext), this.scenarioContext);
                     this.scenarioContext.ContextPropertyChanged += this.scenarioContext_ContextPropertyChanged;
                 }
 
