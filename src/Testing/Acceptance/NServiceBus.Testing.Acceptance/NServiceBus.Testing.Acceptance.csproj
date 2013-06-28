@@ -129,7 +129,6 @@
     <Compile Include="EndpointTemplates\ConfigureExtensions.cs" />
     <Compile Include="EndpointTemplates\DefaultServer.cs" />
     <Compile Include="EndpointTemplates\FailureHandler.cs" />
-    <Compile Include="EndpointTemplates\SubscriptionsInterceptor.cs" />
     <Compile Include="EndpointTemplates\UnitOfWorkInterceptor.cs" />
     <Compile Include="ScenarioDescriptors\AllBuilders.cs" />
     <Compile Include="ScenarioDescriptors\AllSagaPersisters.cs" />

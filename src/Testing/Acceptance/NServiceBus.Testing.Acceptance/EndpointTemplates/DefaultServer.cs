@@ -7,6 +7,7 @@
 
     using NServiceBus;
     using NServiceBus.Config.ConfigurationSource;
+    using NServiceBus.Features;
     using NServiceBus.Hosting.Helpers;
     using NServiceBus.Settings;
     using NServiceBus.Testing.Acceptance.Support;
@@ -24,6 +25,7 @@
             var transportToUse = settings.GetOrNull("Transport");
 
             Configure.Features.Enable<Features.Sagas>();
+
             SettingsHolder.SetDefault("ScaleOut.UseSingleBrokerQueue", true);
 
             var config = Configure.With(types)
@@ -56,7 +58,6 @@
 
             config.Configurer.ConfigureComponent<FailureHandler>(DependencyLifecycle.SingleInstance);
             config.Configurer.ConfigureComponent<UnitOfWorkInterceptor>(DependencyLifecycle.SingleInstance);
-            config.Configurer.ConfigureComponent<SubscriptionsInterceptor>(DependencyLifecycle.SingleInstance);
 
             return config.UnicastBus();
         }

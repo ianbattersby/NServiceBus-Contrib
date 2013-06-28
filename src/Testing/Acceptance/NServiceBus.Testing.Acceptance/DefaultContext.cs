@@ -19,8 +19,6 @@
 
         public int SubscriptionsCount { get; set; }
 
-        public int UnsubscriptionsCount { get; set; }
-
         public IEnumerable<Exception> Exceptions
         {
             get

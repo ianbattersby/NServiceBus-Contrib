@@ -4,6 +4,8 @@
     using System.Collections.Generic;
 
     using NServiceBus;
+    using NServiceBus.Features;
+    using NServiceBus.Unicast.Subscriptions.MessageDrivenSubscriptions;
 
     public class EndpointBehaviorBuilder<TContext> where TContext:ScenarioContext
     {        
@@ -16,6 +18,25 @@
                 };
         }
 
+        public EndpointBehaviorBuilder<TContext> MonitorSubscriptions()
+        {
+            this.behaviour.Givens.Add(new GivenDefinition<TContext>((bus, context) =>
+                {
+                    if (!typeof(DefaultContext).IsAssignableFrom(context.GetType()))
+                    {
+                        throw new Exception("You must use DefaultContext, or inherit from it, to monitor subscriptions.");
+                    }
+
+                    if (Feature.IsEnabled<MessageDrivenSubscriptions>())
+                    {
+                        Configure.Instance.Builder.Build<MessageDrivenSubscriptionManager>().ClientSubscribed +=
+                            (sender, args) => (context as DefaultContext).SubscriptionsCount++;
+                    }
+                }));
+
+            return this;
+        }
+
         public EndpointBehaviorBuilder<TContext> Given(Action<IBus> action)
         {
             this.behaviour.Givens.Add(new GivenDefinition<TContext>(action));
@@ -26,6 +47,27 @@
         public EndpointBehaviorBuilder<TContext> Given(Action<IBus,TContext> action)
         {
             this.behaviour.Givens.Add(new GivenDefinition<TContext>(action));
+
+            return this;
+        }
+
+        public EndpointBehaviorBuilder<TContext> Subscribe<TEvent>() where TEvent : class
+        {
+            this.behaviour.Whens.Add(
+                new WhenDefinition<TContext>(
+                    context => context.EndpointsStarted,
+                    (bus, context) =>
+                        {
+                            if (!typeof(DefaultContext).IsAssignableFrom(context.GetType()))
+                            {
+                                throw new Exception("You must use DefaultContext, or inherit from it, to monitor subscriptions.");
+                            }
+
+                            bus.Subscribe<TEvent>();
+
+                            if (!Feature.IsEnabled<MessageDrivenSubscriptions>())
+                                (context as DefaultContext).SubscriptionsCount++;
+                        }));
 
             return this;
         }
