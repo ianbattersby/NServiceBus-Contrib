@@ -21,8 +21,6 @@
 
         public int UnsubscriptionsCount { get; set; }
 
-        public int CallbackCount { get; set; }
-
         public IEnumerable<Exception> Exceptions
         {
             get
