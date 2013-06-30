@@ -11,12 +11,14 @@
 
         public void SerializationFailedForMessage(TransportMessage message, Exception e)
         {
-            this.Context.AddException(e);
+            if (typeof(DefaultContext).IsAssignableFrom(this.Context.GetType()))
+                this.Context.AddException(e);
         }
 
         public void ProcessingAlwaysFailsForMessage(TransportMessage message, Exception e)
         {
-            this.Context.AddException(e);
+            if (typeof(DefaultContext).IsAssignableFrom(this.Context.GetType()))
+                this.Context.AddException(e);
         }
 
         public void Init(Address address)

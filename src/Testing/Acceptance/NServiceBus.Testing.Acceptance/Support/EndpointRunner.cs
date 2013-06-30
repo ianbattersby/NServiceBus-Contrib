@@ -48,6 +48,11 @@
                         this.config.Configurer.RegisterSingleton(this.scenarioContext.GetType(), this.scenarioContext);
                     }
 
+                    if (this.scenarioContext.GetType() != typeof(DefaultContext) && typeof(DefaultContext).IsAssignableFrom(this.scenarioContext.GetType()))
+                    {
+                        this.config.Configurer.RegisterSingleton(typeof(DefaultContext), this.scenarioContext);
+                    }
+
                     this.config.Configurer.RegisterSingleton(typeof(ScenarioContext), this.scenarioContext);
                     this.scenarioContext.ContextPropertyChanged += this.scenarioContext_ContextPropertyChanged;
                 }
