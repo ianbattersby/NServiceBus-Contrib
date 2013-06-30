@@ -14,6 +14,8 @@
     public class CustomContext : DefaultContext
     {
         public bool HandlerInvoked { get; set; }
+
+        public DateTime? HandledAt { get; set; }
     }
 
     public class ExceptionThrownWhenTestFails
@@ -46,6 +48,32 @@
                         {
                             Assert.AreEqual(1, context.Exceptions.Count());
                         })
+                    .Run();
+        }
+
+        [Test]
+        public void AbortsATestRunIfExceptionDetected()
+        {
+            Scenario.Define<CustomContext>()
+                    .WithEndpoint<Publisher>(
+                        builder =>
+                        {
+                            builder.MonitorSubscriptions();
+
+                            builder.When(context => context.SubscriptionsCount == 1, (bus, context) =>
+                                bus.Publish(
+                                    new TestEvent
+                                    {
+                                        Something = "Hello!"
+                                    }));
+                        })
+                    .WithEndpoint<Subscriber>(builder => builder.Subscribe<TestEvent>())
+                    .Done(context => context.SubscriptionsCount == 1 && context.HandlerInvoked & 1 == 2)
+                    .Should(context =>
+                    {
+                        Assert.NotNull(context.HandledAt);
+                        Assert.Greater(30, DateTime.UtcNow.Subtract(((DateTime)context.HandledAt)).Seconds);
+                    })
                     .Run();
         }
 
@@ -86,6 +114,7 @@
         public void Handle(TestEvent message)
         {
             this.CustomContext.HandlerInvoked = true;
+            this.CustomContext.HandledAt = DateTime.UtcNow;
             throw new Exception("This is broke on purpose!");
         }
     }

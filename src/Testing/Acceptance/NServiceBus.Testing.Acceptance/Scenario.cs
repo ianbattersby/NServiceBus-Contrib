@@ -58,7 +58,20 @@
 
         public IScenarioWithEndpointBehavior<TContext> Done(Func<TContext, bool> func)
         {
-            this.done = (c) => func((TContext)c);
+            if (typeof(DefaultContext).IsAssignableFrom(typeof(TContext)))
+                this.done = c =>
+                    {
+                        var predicate = func((TContext)c);
+
+                        if (!predicate && (c as DefaultContext).Exceptions.Any())
+                        {
+                            return true;
+                        }
+
+                        return predicate;
+                    };
+            else
+                this.done = (c) => func((TContext)c);
 
             return this;
         }
