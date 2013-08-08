@@ -7,7 +7,6 @@
 
     using NServiceBus;
     using NServiceBus.Config.ConfigurationSource;
-    using NServiceBus.Features;
     using NServiceBus.Hosting.Helpers;
     using NServiceBus.Settings;
     using NServiceBus.Testing.Acceptance.Support;
@@ -45,10 +44,10 @@
             if (endpointConfiguration.MessagesDefinition != null)
                 config.DefiningMessagesAs(endpointConfiguration.MessagesDefinition);
 
-            if (transportToUse == null || 
-                transportToUse.Contains("Msmq") || 
-                transportToUse.Contains("SqlServer") || 
-                transportToUse.Contains("RabbitMq") || 
+            if (transportToUse == null ||
+                transportToUse.Contains("Msmq") ||
+                transportToUse.Contains("SqlServer") ||
+                transportToUse.Contains("RabbitMq") ||
                 transportToUse.Contains("AzureServiceBus") ||
                 transportToUse.Contains("AzureStorageQueue"))
                 config.UseInMemoryTimeoutPersister();
@@ -71,10 +70,21 @@
                             .Where(a => a != Assembly.GetExecutingAssembly())
                             .SelectMany(a => a.GetTypes());
 
+            types = types
+                .Union(GetNestedTypeRecursive(endpointConfiguration.BuilderType.DeclaringType))
+                .Where(t => !endpointConfiguration.TypesToExclude.Contains(t)).ToList();
 
-            types = types.Union(GetNestedTypeRecursive(endpointConfiguration.BuilderType.DeclaringType));
+            var exceptions = (from mappedType in endpointConfiguration.EndpointMappings.Select(x => x.Key) where !types.Contains(mappedType) select "Unable to find mapped type '" + mappedType.Name + "' in scanned assemblies.").ToList();
 
-            return types.Where(t => !endpointConfiguration.TypesToExclude.Contains(t)).ToList();
+            if (exceptions.Any())
+            {
+                if (exceptions.Count > 1)
+                    throw new AggregateException(exceptions.Select(x => new Exception(x)));
+                else
+                    throw new Exception(exceptions.ElementAt(0));
+            }
+
+            return types;
         }
 
         static IEnumerable<Type> GetNestedTypeRecursive(Type rootType)
