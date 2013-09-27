@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="C:\source\github\NServiceBus-Contrib\src\Testing\Acceptance\NServiceBus.Testing.Acceptance.Tests\bin\x86\Debug\NServiceBus.Testing.Acceptance.Tests.dll" total="4" errors="1" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2013-09-27" time="15:05:16">
+  <environment nunit-version="2.6.2.12296" clr-version="2.0.50727.6400" os-version="Microsoft Windows NT 6.2.9200.0" platform="Win32NT" cwd="C:\source\github\NServiceBus-Contrib\src\Testing\Acceptance" machine-name="LAPTOP-IANB" user="battersbyi" user-domain="ADASTRA" />
+  <culture-info current-culture="en-GB" current-uiculture="en-GB" />
+  <test-suite type="Assembly" name="C:\source\github\NServiceBus-Contrib\src\Testing\Acceptance\NServiceBus.Testing.Acceptance.Tests\bin\x86\Debug\NServiceBus.Testing.Acceptance.Tests.dll" executed="True" result="Failure" success="False" time="112.047" asserts="0">
+    <results>
+      <test-suite type="Namespace" name="NServiceBus" executed="True" result="Failure" success="False" time="112.042" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="Testing" executed="True" result="Failure" success="False" time="112.042" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="Acceptance" executed="True" result="Failure" success="False" time="112.042" asserts="0">
+                <results>
+                  <test-suite type="Namespace" name="Tests" executed="True" result="Failure" success="False" time="112.041" asserts="0">
+                    <results>
+                      <test-suite type="TestFixture" name="ExceptionThrownWhenTestFails" executed="True" result="Success" success="True" time="12.359" asserts="0">
+                        <results>
+                          <test-case name="NServiceBus.Testing.Acceptance.Tests.ExceptionThrownWhenTestFails.AbortsATestRunIfExceptionDetected" executed="True" result="Success" success="True" time="6.801" asserts="4" />
+                          <test-case name="NServiceBus.Testing.Acceptance.Tests.ExceptionThrownWhenTestFails.DetectsExceptionAndReports" executed="True" result="Success" success="True" time="5.525" asserts="2" />
+                        </results>
+                      </test-suite>
+                      <test-suite type="TestFixture" name="PreventitiveUnhappyPaths" executed="True" result="Success" success="True" time="3.629" asserts="0">
+                        <results>
+                          <test-case name="NServiceBus.Testing.Acceptance.Tests.PreventitiveUnhappyPaths.ThrowsAggregateExceptionIfMappedTypeNotScanned" executed="True" result="Success" success="True" time="3.628" asserts="1" />
+                        </results>
+                      </test-suite>
+                      <test-suite type="TestFixture" name="SimpleSendAndReceiveWithSQLiteExample" executed="True" result="Failure" success="False" time="95.991" asserts="0">
+                        <results>
+                          <test-case name="NServiceBus.Testing.Acceptance.Tests.SimpleSendAndReceiveWithSQLiteExample.CanSendValidCommand" executed="True" result="Error" success="False" time="95.991" asserts="0">
+                            <failure>
+                              <message><![CDATA[System.AggregateException : Test run failed due to one or more exception
+  ----> NServiceBus.Testing.Acceptance.Support.ScenarioException : The maximum time limit for this test(90s) has been reached
+----------------------------------------------------------------------------
+]]></message>
+                              <stack-trace><![CDATA[at NServiceBus.Testing.Acceptance.Support.ScenarioRunner.Run(IList`1 runDescriptors, IList`1 behaviorDescriptors, IList`1 shoulds, Func`2 done, Int32 limitTestParallelismTo, Action`1 reports) in c:\Source\github\NServiceBus-Contrib\src\Testing\Acceptance\NServiceBus.Testing.Acceptance\Support\ScenarioRunner.cs:line 86
+at NServiceBus.Testing.Acceptance.ScenarioWithContext`1.Run(Nullable`1 testExecutionTimeout) in c:\Source\github\NServiceBus-Contrib\src\Testing\Acceptance\NServiceBus.Testing.Acceptance\Scenario.cs:line 102
+at NServiceBus.Testing.Acceptance.Tests.SimpleSendAndReceiveWithSQLiteExample.CanSendValidCommand() in c:\Source\github\NServiceBus-Contrib\src\Testing\Acceptance\NServiceBus.Testing.Acceptance.Tests\SimpleSendAndReceiveExample.cs:line 26
+--ScenarioException
+at NServiceBus.Testing.Acceptance.Support.ScenarioRunner.PerformScenarios(RunDescriptor runDescriptor, IEnumerable`1 runners, Func`1 done) in c:\Source\github\NServiceBus-Contrib\src\Testing\Acceptance\NServiceBus.Testing.Acceptance\Support\ScenarioRunner.cs:line 245
+at NServiceBus.Testing.Acceptance.Support.ScenarioRunner.PerformTestRun(IList`1 behaviorDescriptors, IList`1 shoulds, RunDescriptor runDescriptor, Func`2 done) in c:\Source\github\NServiceBus-Contrib\src\Testing\Acceptance\NServiceBus.Testing.Acceptance\Support\ScenarioRunner.cs:line 166
+]]></stack-trace>
+                            </failure>
+                          </test-case>
+                        </results>
+                      </test-suite>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
