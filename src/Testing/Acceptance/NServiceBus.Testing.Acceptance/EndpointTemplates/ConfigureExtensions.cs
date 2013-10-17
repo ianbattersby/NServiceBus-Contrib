@@ -66,14 +66,14 @@
 
             var type = Type.GetType(serializer);
 
-            if (type == typeof (XmlMessageSerializer))
+            if (type == typeof(XmlMessageSerializer))
             {
                 Configure.Serialization.Xml();
                 return config;
             }
 
 
-            if (type == typeof (JsonMessageSerializer))
+            if (type == typeof(JsonMessageSerializer))
             {
                 Configure.Serialization.Json();
                 return config;
@@ -85,7 +85,7 @@
                 return config;
             }
 
-            if (type == typeof (BinaryMessageSerializer))
+            if (type == typeof(BinaryMessageSerializer))
             {
                 Configure.Serialization.Binary();
                 return config;
@@ -151,7 +151,7 @@
                 NHibernateSettingRetriever.ConnectionStrings = () =>
                     {
                         var c = new ConnectionStringSettingsCollection();
-                        
+
                         c.Add(new ConnectionStringSettings("NServiceBus/Persistence", NHibernateConnectionString));
                         return c;
 

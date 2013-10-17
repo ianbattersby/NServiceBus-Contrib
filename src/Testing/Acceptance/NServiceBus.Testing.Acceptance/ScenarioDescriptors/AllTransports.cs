@@ -43,7 +43,7 @@
                         }
 
                         activeTransports.Add(transport);
-                    } 
+                    }
                 }
 
                 return activeTransports;
@@ -56,7 +56,7 @@
     public class AllDtcTransports : AllTransports
     {
         public AllDtcTransports()
-        {   
+        {
             Remove(Transports.RabbitMQ);
         }
     }
@@ -93,7 +93,7 @@
         public static IEnumerable<Type> GetAllTypesAssignableTo<T>()
         {
             return AvailableAssemblies.SelectMany(a => a.GetTypes())
-                                      .Where(t => typeof (T).IsAssignableFrom(t) && t != typeof(T))
+                                      .Where(t => typeof(T).IsAssignableFrom(t) && t != typeof(T))
                                       .ToList();
         }
 
@@ -102,7 +102,7 @@
             get
             {
                 if (assemblies == null)
-                    assemblies = AssemblyScanner.GetScannableAssemblies().Assemblies;
+                    assemblies = new AssemblyScanner().GetScannableAssemblies().Assemblies;
 
                 return assemblies;
             }

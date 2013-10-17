@@ -82,7 +82,7 @@
             Configure.Serialization.Xml();
 
             var config = Configure
-                .With(AllAssemblies.Matching("NServiceBus.Testing.Acceptance.Tests"))
+                .With(AllAssemblies.Matching("NServiceBus.Testing.Acceptance.Tests").And("NServiceBus.NHibernate.dll"))
                     .DefineEndpointName(endpointConfiguration.EndpointName)
                     .DefiningCommandsAs(t => t.Namespace != null && t.Namespace.EndsWith("Tests.Commands"))
                     .CustomConfigurationSource(configSource)
@@ -90,7 +90,6 @@
                     .UseNHibernateSagaPersister()
                     .UseNHibernateTimeoutPersister()
                     .UseNHibernateSubscriptionPersister()
-                    .UseNHibernateGatewayPersister()
                     .UseTransport<Msmq>()
                     .PurgeOnStartup(true)
                     .UnicastBus();
