@@ -84,6 +84,16 @@
                     throw new Exception(exceptions.ElementAt(0));
             }
 
+            var messageCheck = endpointConfiguration.MessagesDefinition == null || types.Any(t => endpointConfiguration.MessagesDefinition(t));
+            var commandCheck = endpointConfiguration.CommandsDefinition == null || types.Any(t => endpointConfiguration.CommandsDefinition(t));
+            var eventCheck = endpointConfiguration.EventsDefinition == null || types.Any(t => endpointConfiguration.EventsDefinition(t));
+
+            if (!(messageCheck && commandCheck && eventCheck))
+            {
+                throw new Exception(
+                    string.Format("Unobtrusive-mode predicates exist for '{0}' with no matching types:\n  {1}", endpointConfiguration.BuilderType.FullName, string.Format("[VALID] -- MessagesAs: {0}, CommandsAs: {1}, EventsAs: {2}", messageCheck, commandCheck, eventCheck)));
+            }
+
             return types;
         }
 

@@ -77,22 +77,16 @@
 
             var failedRuns = results.Where(s => s.Result.Failed).ToList();
 
-            foreach (var runSummary in failedRuns)
-            {
-                DisplayRunResult(runSummary, totalRuns);
-            }
-
-            if (failedRuns.Any())
-                throw new AggregateException("Test run failed due to one or more exception", failedRuns.Select(f => f.Result.Exception));
-
-
-            foreach (var runSummary in results.Where(s => !s.Result.Failed))
+            foreach (var runSummary in results)
             {
                 DisplayRunResult(runSummary, totalRuns);
 
                 if (reports != null)
                     reports(runSummary);
             }
+
+            if (results.Any(s => s.Result.Failed))
+                throw new AggregateException("Test run failed due to one or more exception", failedRuns.Select(f => f.Result.Exception));
 
             return results;
         }
