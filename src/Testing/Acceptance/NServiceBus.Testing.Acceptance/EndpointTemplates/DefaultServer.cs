@@ -64,7 +64,7 @@
         static IEnumerable<Type> GetTypesToUse(EndpointConfiguration endpointConfiguration)
         {
             var assemblies = endpointConfiguration.AssembliesToScan.Count > 0 ?
-                endpointConfiguration.AssembliesToScan : AssemblyScanner.GetScannableAssemblies().Assemblies;
+                endpointConfiguration.AssembliesToScan : new AssemblyScanner().GetScannableAssemblies().Assemblies;
 
             var types = assemblies
                             .Where(a => a != Assembly.GetExecutingAssembly())

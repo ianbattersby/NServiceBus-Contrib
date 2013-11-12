@@ -102,7 +102,7 @@
             get
             {
                 if (assemblies == null)
-                    assemblies = AssemblyScanner.GetScannableAssemblies().Assemblies;
+                    assemblies = new AssemblyScanner().GetScannableAssemblies().Assemblies;
 
                 return assemblies;
             }
