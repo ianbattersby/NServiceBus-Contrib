@@ -16,7 +16,7 @@ namespace NServiceBus.Testing.Acceptance.Customization
 
         public static Func<Type, string> EndpointNamingConvention { get; set; }
 
-        public static Func<IDictionary<string, object>> DefaultDomainData { get; set; } 
+        public static Func<IDictionary<string, object>> DefaultDomainData { get; set; }
 
         public static string DefaultNameFor<T>()
         {

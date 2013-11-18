@@ -28,7 +28,7 @@
 
     public static class ConfigureExtensions
     {
-        static string NHibernateConnectionString = @"Server=localhost\sqlexpress;Database=nservicebus;Trusted_Connection=True;";
+        public static string DefaultConnectionString = @"Server=localhost\sqlexpress;Database=nservicebus;Trusted_Connection=True;";
 
         public static string GetOrNull(this IDictionary<string, string> dictionary, string key)
         {
@@ -95,7 +95,7 @@
         }
 
 
-        public static Configure DefineSagaPersister(this Configure config, string persister)
+        public static Configure DefineSagaPersister(this Configure config, string persister, string connectionString)
         {
             if (string.IsNullOrEmpty(persister))
                 return config.InMemorySagaPersister();
@@ -118,7 +118,7 @@
                 {
                     var c = new ConnectionStringSettingsCollection();
 
-                    c.Add(new ConnectionStringSettings("NServiceBus/Persistence", NHibernateConnectionString));
+                    c.Add(new ConnectionStringSettings("NServiceBus/Persistence", connectionString ?? DefaultConnectionString));
                     return c;
 
                 };
@@ -129,7 +129,7 @@
         }
 
 
-        public static Configure DefineSubscriptionStorage(this Configure config, string persister)
+        public static Configure DefineSubscriptionStorage(this Configure config, string persister, string connectionString = null)
         {
             if (string.IsNullOrEmpty(persister))
                 return config.InMemorySubscriptionStorage();
@@ -152,7 +152,7 @@
                     {
                         var c = new ConnectionStringSettingsCollection();
                         
-                        c.Add(new ConnectionStringSettings("NServiceBus/Persistence", NHibernateConnectionString));
+                        c.Add(new ConnectionStringSettings("NServiceBus/Persistence", connectionString ?? DefaultConnectionString));
                         return c;
 
                     };

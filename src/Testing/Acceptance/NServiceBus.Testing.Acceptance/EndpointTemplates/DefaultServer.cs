@@ -33,7 +33,7 @@
                             .CustomConfigurationSource(configSource)
                             .DefineSerializer(settings.GetOrNull("Serializer"))
                             .DefineTransport(settings)
-                            .DefineSagaPersister(settings.GetOrNull("SagaPersister"));
+                            .DefineSagaPersister(settings.GetOrNull("SagaPersister"), settings.GetOrNull("SagaPersister.ConnectionString"));
 
             if (endpointConfiguration.CommandsDefinition != null)
                 config.DefiningCommandsAs(endpointConfiguration.CommandsDefinition);
