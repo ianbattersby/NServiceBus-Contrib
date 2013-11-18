@@ -343,7 +343,17 @@
                 domainSetup.ConfigurationFile = endpoint.AppConfigPath;
 
             var appDomain = AppDomain.CreateDomain(endpointName, AppDomain.CurrentDomain.Evidence, domainSetup);
-            
+
+            if (Conventions.DefaultDomainData != null)
+            {
+                var domainData = Conventions.DefaultDomainData.Invoke();
+
+                foreach (var data in domainData)
+                {
+                    appDomain.SetData(data.Key, data.Value);
+                }
+
+            }
 
             return new ActiveRunner
                 {
