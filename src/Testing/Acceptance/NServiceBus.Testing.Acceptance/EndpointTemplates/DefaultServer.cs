@@ -33,7 +33,11 @@
                             .CustomConfigurationSource(configSource)
                             .DefineSerializer(settings.GetOrNull("Serializer"))
                             .DefineTransport(settings)
-                            .DefineSagaPersister(settings.GetOrNull("SagaPersister"), settings.GetOrNull("SagaPersister.ConnectionString"));
+                            .DefineSagaPersister(
+                                settings.GetOrNull("SagaPersister"), 
+                                settings.GetOrNull("SagaPersister.ConnectionString"),
+                                settings.GetOrNull("NHibernate.Dialect"),
+                                settings.GetOrNull("NHibernate.Driver"));
 
             if (endpointConfiguration.CommandsDefinition != null)
                 config.DefiningCommandsAs(endpointConfiguration.CommandsDefinition);
@@ -53,7 +57,11 @@
                 config.UseInMemoryTimeoutPersister();
 
             if (transportToUse == null || transportToUse.Contains("Msmq") || transportToUse.Contains("SqlServer"))
-                config.DefineSubscriptionStorage(settings.GetOrNull("SubscriptionStorage"));
+                config.DefineSubscriptionStorage(
+                    settings.GetOrNull("SubscriptionStorage"),
+                    settings.GetOrNull("SagaPersister.ConnectionString"),
+                                settings.GetOrNull("NHibernate.Dialect"),
+                                settings.GetOrNull("NHibernate.Driver"));
 
             config.Configurer.ConfigureComponent<FailureHandler>(DependencyLifecycle.SingleInstance);
             config.Configurer.ConfigureComponent<UnitOfWorkInterceptor>(DependencyLifecycle.SingleInstance);

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.Specialized;
     using System.Configuration;
     using System.IO;
 
@@ -95,7 +96,7 @@
         }
 
 
-        public static Configure DefineSagaPersister(this Configure config, string persister, string connectionString)
+        public static Configure DefineSagaPersister(this Configure config, string persister, string connectionString, string dialect, string driver)
         {
             if (string.IsNullOrEmpty(persister))
                 return config.InMemorySagaPersister();
@@ -114,6 +115,23 @@
 
             if (type == typeof(SagaPersister))
             {
+                NHibernateSettingRetriever.AppSettings = () =>
+                    {
+                        var c = new NameValueCollection();
+
+                        if (!string.IsNullOrWhiteSpace(dialect))
+                        {
+                            c.Add("NServiceBus/Persistence/NHibernate/dialect", dialect);
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(driver))
+                        {
+                            c.Add("NServiceBus/Persistence/NHibernate/connection.driver_class", driver);
+                        }
+
+                        return c;
+                    };
+
                 NHibernateSettingRetriever.ConnectionStrings = () =>
                 {
                     var c = new ConnectionStringSettingsCollection();
@@ -129,7 +147,7 @@
         }
 
 
-        public static Configure DefineSubscriptionStorage(this Configure config, string persister, string connectionString = null)
+        public static Configure DefineSubscriptionStorage(this Configure config, string persister, string connectionString, string dialect, string driver)
         {
             if (string.IsNullOrEmpty(persister))
                 return config.InMemorySubscriptionStorage();
@@ -148,6 +166,23 @@
 
             if (type == typeof(SubscriptionStorage))
             {
+                NHibernateSettingRetriever.AppSettings = () =>
+                {
+                    var c = new NameValueCollection();
+
+                    if (!string.IsNullOrWhiteSpace(dialect))
+                    {
+                        c.Add("NServiceBus/Persistence/NHibernate/dialect", dialect);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(driver))
+                    {
+                        c.Add("NServiceBus/Persistence/NHibernate/connection.driver_class", driver);
+                    }
+
+                    return c;
+                }; 
+                
                 NHibernateSettingRetriever.ConnectionStrings = () =>
                     {
                         var c = new ConnectionStringSettingsCollection();
