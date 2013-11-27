@@ -29,7 +29,7 @@
 
             var config = Configure.With(types)
                             .DefineEndpointName(endpointConfiguration.EndpointName)
-                            .DefineBuilder(settings.GetOrNull("Builder"))
+                            .DefineBuilder(settings.GetOrNull("Builder"), settings.GetOrNull("BuilderRegistryType"))
                             .CustomConfigurationSource(configSource)
                             .DefineSerializer(settings.GetOrNull("Serializer"))
                             .DefineTransport(settings)

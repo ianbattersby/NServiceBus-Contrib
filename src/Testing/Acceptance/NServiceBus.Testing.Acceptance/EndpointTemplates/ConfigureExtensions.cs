@@ -33,6 +33,9 @@
     using NServiceBus.TimeoutPersisters.NHibernate;
     using NServiceBus.Unicast.Subscriptions.NHibernate;
 
+    using StructureMap;
+    using StructureMap.Configuration.DSL;
+
     public static class ConfigureExtensions
     {
         public static string DefaultConnectionString = @"Server=localhost\sqlexpress;Database=nservicebus;Trusted_Connection=True;";
@@ -77,14 +80,14 @@
 
             var type = Type.GetType(serializer);
 
-            if (type == typeof (XmlMessageSerializer))
+            if (type == typeof(XmlMessageSerializer))
             {
                 Configure.Serialization.Xml();
                 return config;
             }
 
 
-            if (type == typeof (JsonMessageSerializer))
+            if (type == typeof(JsonMessageSerializer))
             {
                 Configure.Serialization.Json();
                 return config;
@@ -96,7 +99,7 @@
                 return config;
             }
 
-            if (type == typeof (BinaryMessageSerializer))
+            if (type == typeof(BinaryMessageSerializer))
             {
                 Configure.Serialization.Binary();
                 return config;
@@ -155,7 +158,7 @@
             {
                 AddAppSetting("NServiceBus/Persistence/NHibernate/dialect", dialect ?? DefaultNHibernateDialect);
                 AddAppSetting("NServiceBus/Persistence/NHibernate/connection.driver_class", driver ?? DefaultNHibernateDriver);
-                AddConnectionSetting("NServiceBus/Persistence/NHibernate/Timeout", connectionString ?? DefaultConnectionString); 
+                AddConnectionSetting("NServiceBus/Persistence/NHibernate/Timeout", connectionString ?? DefaultConnectionString);
 
                 return config.UseNHibernateTimeoutPersister();
             }
@@ -184,7 +187,7 @@
             {
                 AddAppSetting("NServiceBus/Persistence/NHibernate/dialect", dialect ?? DefaultNHibernateDialect);
                 AddAppSetting("NServiceBus/Persistence/NHibernate/connection.driver_class", driver ?? DefaultNHibernateDriver);
-                AddConnectionSetting("NServiceBus/Persistence/NHibernate/Subscription", connectionString ?? DefaultConnectionString); 
+                AddConnectionSetting("NServiceBus/Persistence/NHibernate/Subscription", connectionString ?? DefaultConnectionString);
 
                 return config.UseNHibernateSubscriptionPersister();
             }
@@ -198,7 +201,7 @@
             throw new InvalidOperationException("Unknown subscription persister:" + persister);
         }
 
-        public static Configure DefineBuilder(this Configure config, string builder)
+        public static Configure DefineBuilder(this Configure config, string builder, string builderRegistry)
         {
             if (string.IsNullOrEmpty(builder))
                 return config.DefaultBuilder();
@@ -222,7 +225,20 @@
                 return config.SpringFrameworkBuilder();
 
             if (type == typeof(StructureMapObjectBuilder))
+            {
+                if (!String.IsNullOrWhiteSpace(builderRegistry))
+                {
+                    var registryType = Type.GetType(builderRegistry);
+                    return config.StructureMapBuilder(new Container(
+                        x =>
+                        {
+                            var registry = Activator.CreateInstance(registryType);
+                            x.AddRegistry((Registry)registry);
+                        }));
+                }
+
                 return config.StructureMapBuilder();
+            }
 
             if (type == typeof(UnityObjectBuilder))
                 return config.StructureMapBuilder();

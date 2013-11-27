@@ -86,7 +86,7 @@
                     .DefineEndpointName(endpointConfiguration.EndpointName)
                     .DefiningCommandsAs(t => t.Namespace != null && t.Namespace.EndsWith("Tests.Commands"))
                     .CustomConfigurationSource(configSource)
-                    .DefineBuilder(runDescriptor.Settings.GetOrNull("Builder"))
+                    .DefineBuilder(runDescriptor.Settings.GetOrNull("Builder"), runDescriptor.Settings.GetOrNull("BuilderRegistryType"))
                     .UseNHibernateSagaPersister()
                     .UseNHibernateTimeoutPersister()
                     .UseNHibernateSubscriptionPersister()
