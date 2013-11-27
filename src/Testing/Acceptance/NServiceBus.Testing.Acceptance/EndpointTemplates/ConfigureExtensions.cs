@@ -5,6 +5,9 @@
     using System.Collections.Specialized;
     using System.Configuration;
     using System.IO;
+    using System.Runtime.Remoting.Messaging;
+
+    using NHibernate.Util;
 
     using NServiceBus.ObjectBuilder.Autofac;
     using NServiceBus.ObjectBuilder.CastleWindsor;
@@ -15,21 +18,28 @@
     using NServiceBus.ObjectBuilder.Unity;
     using NServiceBus.Persistence.InMemory.SagaPersister;
     using NServiceBus.Persistence.InMemory.SubscriptionStorage;
+    using NServiceBus.Persistence.InMemory.TimeoutPersister;
     using NServiceBus.Persistence.Msmq.SubscriptionStorage;
     using NServiceBus.Persistence.NHibernate;
     using NServiceBus.Persistence.Raven.SagaPersister;
     using NServiceBus.Persistence.Raven.SubscriptionStorage;
+    using NServiceBus.Persistence.Raven.TimeoutPersister;
     using NServiceBus.SagaPersisters.NHibernate;
     using NServiceBus.Serializers.Binary;
     using NServiceBus.Serializers.Json;
     using NServiceBus.Serializers.XML;
     using NServiceBus.Testing.Acceptance;
     using NServiceBus.Testing.Acceptance.Support;
+    using NServiceBus.TimeoutPersisters.NHibernate;
     using NServiceBus.Unicast.Subscriptions.NHibernate;
 
     public static class ConfigureExtensions
     {
         public static string DefaultConnectionString = @"Server=localhost\sqlexpress;Database=nservicebus;Trusted_Connection=True;";
+
+        public static string DefaultNHibernateDialect = "NHibernate.Dialect.MsSql2008Dialect";
+
+        public static string DefaultNHibernateDriver = "NHibernate.Driver.Sql2008ClientDriver";
 
         public static string GetOrNull(this IDictionary<string, string> dictionary, string key)
         {
@@ -115,37 +125,43 @@
 
             if (type == typeof(SagaPersister))
             {
-                NHibernateSettingRetriever.AppSettings = () =>
-                    {
-                        var c = new NameValueCollection();
+                AddAppSetting("NServiceBus/Persistence/NHibernate/dialect", dialect ?? DefaultNHibernateDialect);
+                AddAppSetting("NServiceBus/Persistence/NHibernate/connection.driver_class", driver ?? DefaultNHibernateDriver);
+                AddConnectionSetting("NServiceBus/Persistence/NHibernate/Saga", connectionString ?? DefaultConnectionString);
 
-                        if (!string.IsNullOrWhiteSpace(dialect))
-                        {
-                            c.Add("NServiceBus/Persistence/NHibernate/dialect", dialect);
-                        }
-
-                        if (!string.IsNullOrWhiteSpace(driver))
-                        {
-                            c.Add("NServiceBus/Persistence/NHibernate/connection.driver_class", driver);
-                        }
-
-                        return c;
-                    };
-
-                NHibernateSettingRetriever.ConnectionStrings = () =>
-                {
-                    var c = new ConnectionStringSettingsCollection();
-
-                    c.Add(new ConnectionStringSettings("NServiceBus/Persistence", connectionString ?? DefaultConnectionString));
-                    return c;
-
-                };
                 return config.UseNHibernateSagaPersister();
             }
 
-            throw new InvalidOperationException("Unknown persister:" + persister);
+            throw new InvalidOperationException("Unknown saga persister:" + persister);
         }
 
+        public static Configure DefineTimeoutPersister(this Configure config, string persister, string connectionString, string dialect, string driver)
+        {
+            if (string.IsNullOrEmpty(persister))
+                return config.UseInMemoryTimeoutPersister();
+
+            var type = Type.GetType(persister);
+
+            if (type == typeof(InMemoryTimeoutPersistence))
+                return config.UseInMemoryTimeoutPersister();
+
+            if (type == typeof(RavenTimeoutPersistence))
+            {
+                config.RavenPersistence(() => "url=http://localhost:8080");
+                return config.UseRavenTimeoutPersister();
+            }
+
+            if (type == typeof(TimeoutStorage))
+            {
+                AddAppSetting("NServiceBus/Persistence/NHibernate/dialect", dialect ?? DefaultNHibernateDialect);
+                AddAppSetting("NServiceBus/Persistence/NHibernate/connection.driver_class", driver ?? DefaultNHibernateDriver);
+                AddConnectionSetting("NServiceBus/Persistence/NHibernate/Timeout", connectionString ?? DefaultConnectionString); 
+
+                return config.UseNHibernateTimeoutPersister();
+            }
+
+            throw new InvalidOperationException("Unknown timeout persister:" + persister);
+        }
 
         public static Configure DefineSubscriptionStorage(this Configure config, string persister, string connectionString, string dialect, string driver)
         {
@@ -166,31 +182,10 @@
 
             if (type == typeof(SubscriptionStorage))
             {
-                NHibernateSettingRetriever.AppSettings = () =>
-                {
-                    var c = new NameValueCollection();
+                AddAppSetting("NServiceBus/Persistence/NHibernate/dialect", dialect ?? DefaultNHibernateDialect);
+                AddAppSetting("NServiceBus/Persistence/NHibernate/connection.driver_class", driver ?? DefaultNHibernateDriver);
+                AddConnectionSetting("NServiceBus/Persistence/NHibernate/Subscription", connectionString ?? DefaultConnectionString); 
 
-                    if (!string.IsNullOrWhiteSpace(dialect))
-                    {
-                        c.Add("NServiceBus/Persistence/NHibernate/dialect", dialect);
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(driver))
-                    {
-                        c.Add("NServiceBus/Persistence/NHibernate/connection.driver_class", driver);
-                    }
-
-                    return c;
-                }; 
-                
-                NHibernateSettingRetriever.ConnectionStrings = () =>
-                    {
-                        var c = new ConnectionStringSettingsCollection();
-                        
-                        c.Add(new ConnectionStringSettings("NServiceBus/Persistence", connectionString ?? DefaultConnectionString));
-                        return c;
-
-                    };
                 return config.UseNHibernateSubscriptionPersister();
             }
 
@@ -200,7 +195,7 @@
                 return config.MsmqSubscriptionStorage();
             }
 
-            throw new InvalidOperationException("Unknown persister:" + persister);
+            throw new InvalidOperationException("Unknown subscription persister:" + persister);
         }
 
         public static Configure DefineBuilder(this Configure config, string builder)
@@ -256,6 +251,40 @@
 
             SetLoggingLibrary.Log4Net(
                 null, NServiceBus.Logging.Loggers.Log4NetAdapter.Log4NetAppenderFactory.CreateRollingFileAppender(logLevel, logFile));
+        }
+
+        private static void AddAppSetting(string name, string value)
+        {
+            var settings = new NameValueCollection();
+
+            if (NHibernateSettingRetriever.AppSettings != null)
+            {
+                settings = NHibernateSettingRetriever.AppSettings.Invoke();
+            }
+
+            if (settings[name] == null)
+            {
+                settings.Add(name, value);
+
+                NHibernateSettingRetriever.AppSettings = () => settings;
+            }
+        }
+
+        private static void AddConnectionSetting(string name, string connectionString)
+        {
+            var settings = new ConnectionStringSettingsCollection();
+
+            if (NHibernateSettingRetriever.ConnectionStrings != null)
+            {
+                settings = NHibernateSettingRetriever.ConnectionStrings.Invoke();
+            }
+
+            if (settings[name] == null)
+            {
+                settings.Add(new ConnectionStringSettings(name, connectionString));
+
+                NHibernateSettingRetriever.ConnectionStrings = () => settings;
+            }
         }
     }
 }

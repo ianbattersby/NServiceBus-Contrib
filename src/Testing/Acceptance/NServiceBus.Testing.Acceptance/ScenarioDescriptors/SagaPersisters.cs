@@ -12,7 +12,7 @@
     {
         public static readonly RunDescriptor InMemory = new RunDescriptor
             {
-                Key = "InMemorySagaPersister",
+                Key = "InMemorySaga",
                 Settings =
                     new Dictionary<string, string>
                         {
@@ -26,7 +26,7 @@
 
         public static readonly RunDescriptor Raven = new RunDescriptor
             {
-                Key = "RavenSagaPersister",
+                Key = "RavenSaga",
                 Settings =
                     new Dictionary<string, string>
                         {
@@ -39,7 +39,7 @@
 
         public static readonly RunDescriptor NHibernate = new RunDescriptor
         {
-            Key = "NHibernateSagaPersister",
+            Key = "NHSaga",
             Settings =
                 new Dictionary<string, string>
                         {

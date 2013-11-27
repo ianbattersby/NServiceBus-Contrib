@@ -13,7 +13,7 @@
     {
         public static readonly RunDescriptor InMemory = new RunDescriptor
             {
-                Key = "InMemorySubscriptionStorage",
+                Key = "InMemorySubscription",
                 Settings =
                     new Dictionary<string, string>
                         {
@@ -27,7 +27,7 @@
 
         public static readonly RunDescriptor Raven = new RunDescriptor
             {
-                Key = "RavenSubscriptionStorage",
+                Key = "RavenSubscription",
                 Settings =
                     new Dictionary<string, string>
                         {
@@ -40,7 +40,7 @@
 
         public static readonly RunDescriptor NHibernate = new RunDescriptor
             {
-                Key = "NHibernateSubscriptionStorage",
+                Key = "NHSubscription",
                 Settings =
                     new Dictionary<string, string>
                         {
@@ -53,7 +53,7 @@
 
         public static readonly RunDescriptor Msmq = new RunDescriptor
             {
-                Key = "MsmqSubscriptionStorage",
+                Key = "MsmqSubscription",
                 Settings =
                     new Dictionary<string, string>
                         {

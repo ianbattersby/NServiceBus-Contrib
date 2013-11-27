@@ -141,11 +141,13 @@
     <Compile Include="EndpointTemplates\FailureHandler.cs" />
     <Compile Include="EndpointTemplates\UnitOfWorkInterceptor.cs" />
     <Compile Include="ScenarioDescriptors\AllBuilders.cs" />
+    <Compile Include="ScenarioDescriptors\AllTimeoutPersisters.cs" />
     <Compile Include="ScenarioDescriptors\AllSagaPersisters.cs" />
     <Compile Include="ScenarioDescriptors\AllSerializers.cs" />
     <Compile Include="ScenarioDescriptors\AllSubscriptionStorages.cs" />
     <Compile Include="ScenarioDescriptors\AllTransports.cs" />
     <Compile Include="ScenarioDescriptors\Builders.cs" />
+    <Compile Include="ScenarioDescriptors\TimeoutPersisters.cs" />
     <Compile Include="ScenarioDescriptors\SagaPersisters.cs" />
     <Compile Include="ScenarioDescriptors\Serializers.cs" />
     <Compile Include="ScenarioDescriptors\SubscriptionStorages.cs" />

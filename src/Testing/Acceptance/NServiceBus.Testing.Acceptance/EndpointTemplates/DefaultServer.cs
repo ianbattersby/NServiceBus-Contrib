@@ -37,6 +37,11 @@
                                 settings.GetOrNull("SagaPersister"), 
                                 settings.GetOrNull("SagaPersister.ConnectionString"),
                                 settings.GetOrNull("NHibernate.Dialect"),
+                                settings.GetOrNull("NHibernate.Driver"))
+                            .DefineTimeoutPersister(
+                                settings.GetOrNull("TimeoutPersister"),
+                                settings.GetOrNull("TimeoutPersister.ConnectionString"),
+                                settings.GetOrNull("NHibernate.Dialect"),
                                 settings.GetOrNull("NHibernate.Driver"));
 
             if (endpointConfiguration.CommandsDefinition != null)
@@ -48,18 +53,10 @@
             if (endpointConfiguration.MessagesDefinition != null)
                 config.DefiningMessagesAs(endpointConfiguration.MessagesDefinition);
 
-            if (transportToUse == null ||
-                transportToUse.Contains("Msmq") ||
-                transportToUse.Contains("SqlServer") ||
-                transportToUse.Contains("RabbitMq") ||
-                transportToUse.Contains("AzureServiceBus") ||
-                transportToUse.Contains("AzureStorageQueue"))
-                config.UseInMemoryTimeoutPersister();
-
             if (transportToUse == null || transportToUse.Contains("Msmq") || transportToUse.Contains("SqlServer"))
                 config.DefineSubscriptionStorage(
                     settings.GetOrNull("SubscriptionStorage"),
-                    settings.GetOrNull("SagaPersister.ConnectionString"),
+                    settings.GetOrNull("SubscriptionPersister.ConnectionString"),
                                 settings.GetOrNull("NHibernate.Dialect"),
                                 settings.GetOrNull("NHibernate.Driver"));
 
