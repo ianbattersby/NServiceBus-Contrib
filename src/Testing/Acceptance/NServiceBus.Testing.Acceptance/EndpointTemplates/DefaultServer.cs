@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Messaging;
     using System.Reflection;
 
     using NServiceBus;
@@ -59,6 +60,9 @@
                     settings.GetOrNull("SubscriptionPersister.ConnectionString"),
                                 settings.GetOrNull("NHibernate.Dialect"),
                                 settings.GetOrNull("NHibernate.Driver"));
+
+            if (transportToUse.Contains("Msmq") && MessageQueue.Exists(String.Format(".\\private$\\{0}", endpointConfiguration.EndpointName)))
+                MessageQueue.Delete(String.Format(".\\private$\\{0}", endpointConfiguration.EndpointName));
 
             config.Configurer.ConfigureComponent<FailureHandler>(DependencyLifecycle.SingleInstance);
             config.Configurer.ConfigureComponent<UnitOfWorkInterceptor>(DependencyLifecycle.SingleInstance);

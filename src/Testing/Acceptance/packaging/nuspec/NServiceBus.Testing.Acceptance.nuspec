@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>NServiceBus.Testing.Acceptance</id>
-    <version>4.3.1.0</version>
+    <version>4.3.2.3</version>
     <authors>NServiceBus Ltd</authors>
     <owners>nservicebus</owners>
     <copyright>Copyright (C) NServiceBus 2010-2013</copyright>
@@ -24,10 +24,13 @@
       <dependency id="NServiceBus.Unity" version="4.3.0" />
       <dependency id="log4net" version="2.0.1" />
     </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Messaging" targetFramework="net40" />
+    </frameworkAssemblies>
   </metadata>
   <files>
     <file src="..\..\build\NServiceBus.Testing.Acceptance.dll" target="lib\net40" />
     <file src="..\..\build\NServiceBus.Testing.Acceptance.*db" target="lib\net40" />
     <file src="..\..\NServiceBus.Testing.Acceptance\**\*.cs" target="src" />
   </files>
-</package> 
+</package>
