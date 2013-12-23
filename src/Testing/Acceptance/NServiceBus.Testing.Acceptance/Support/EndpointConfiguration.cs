@@ -52,6 +52,8 @@
 
         public Func<Type, bool> EventsDefinition { get; set; }
 
-        public Func<Type, bool> MessagesDefinition { get; set; } 
+        public Func<Type, bool> MessagesDefinition { get; set; }
+
+        public bool PurgeOnStartup { get; set; }
     }
 }

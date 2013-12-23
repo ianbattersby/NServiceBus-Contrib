@@ -61,7 +61,7 @@
                                 settings.GetOrNull("NHibernate.Dialect"),
                                 settings.GetOrNull("NHibernate.Driver"));
 
-            if (transportToUse.Contains("Msmq") && MessageQueue.Exists(String.Format(".\\private$\\{0}", endpointConfiguration.EndpointName)))
+            if (endpointConfiguration.PurgeOnStartup && transportToUse.Contains("Msmq") && MessageQueue.Exists(String.Format(".\\private$\\{0}", endpointConfiguration.EndpointName)))
                 MessageQueue.Delete(String.Format(".\\private$\\{0}", endpointConfiguration.EndpointName));
 
             config.Configurer.ConfigureComponent<FailureHandler>(DependencyLifecycle.SingleInstance);

@@ -72,6 +72,13 @@
             return this;
         }
 
+        public EndpointConfigurationBuilder PurgeOnStartup(bool purgeOnStartup = true)
+        {
+            this.configuration.PurgeOnStartup = purgeOnStartup;
+
+            return this;
+        }
+
         EndpointConfiguration CreateScenario()
         {
             this.configuration.BuilderType = this.GetType();
