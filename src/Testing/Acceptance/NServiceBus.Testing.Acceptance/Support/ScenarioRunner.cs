@@ -166,8 +166,16 @@
 
                 runTimer.Stop();
 
-                Parallel.ForEach(runners, runner => shoulds.Where(s => s.ContextType == runDescriptor.ScenarioContext.GetType()).ToList()
-                                                           .ForEach(v => v.Verify(runDescriptor.ScenarioContext)));
+                Parallel.ForEach(
+                    shoulds.Where(s => s.ContextType == runDescriptor.ScenarioContext.GetType()).ToList(),
+                    should => should.Verify(runDescriptor.ScenarioContext));
+
+                //Parallel.ForEach(
+                //    runners,
+                //    runner =>
+                //    shoulds.Where(s => s.ContextType == runDescriptor.ScenarioContext.GetType())
+                //        .ToList()
+                //        .ForEach(v => v.Verify(runDescriptor.ScenarioContext)));
             }
             catch (Exception ex)
             {

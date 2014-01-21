@@ -90,7 +90,6 @@
                     .UseNHibernateSagaPersister()
                     .UseNHibernateTimeoutPersister()
                     .UseNHibernateSubscriptionPersister()
-                    .UseNHibernateGatewayPersister()
                     .UseTransport<Msmq>()
                     .PurgeOnStartup(true)
                     .UnicastBus();

@@ -43,7 +43,8 @@
                                 settings.GetOrNull("TimeoutPersister"),
                                 settings.GetOrNull("TimeoutPersister.ConnectionString"),
                                 settings.GetOrNull("NHibernate.Dialect"),
-                                settings.GetOrNull("NHibernate.Driver"));
+                                settings.GetOrNull("NHibernate.Driver"))
+                            .DisableGateway();
 
             if (endpointConfiguration.CommandsDefinition != null)
                 config.DefiningCommandsAs(endpointConfiguration.CommandsDefinition);
