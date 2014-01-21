@@ -129,6 +129,7 @@
   <ItemGroup>
     <Compile Include="Commands\DummyCommand.cs" />
     <Compile Include="Commands\OrderPizzaCommand.cs" />
+    <Compile Include="ExampleCustomTemplate.cs" />
     <Compile Include="ExceptionThrownWhenTestFails.cs" />
     <Compile Include="Handlers\OrderPizzaHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

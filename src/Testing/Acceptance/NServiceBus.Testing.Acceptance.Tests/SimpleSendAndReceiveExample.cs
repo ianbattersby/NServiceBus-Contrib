@@ -1,9 +1,9 @@
 ﻿namespace NServiceBus.Testing.Acceptance.Tests
 {
+    using System;
     using System.Linq;
 
     using NServiceBus.Config;
-    using NServiceBus.Config.ConfigurationSource;
     using NServiceBus.Testing.Acceptance.Customization;
     using NServiceBus.Testing.Acceptance.EndpointTemplates;
     using NServiceBus.Testing.Acceptance.ScenarioDescriptors;
@@ -23,7 +23,7 @@
         [Test]
         public void CanSendValidCommand()
         {
-            Scenario.Define<DefaultContext>()
+            Scenario.Define<ComplexContext>()
                 .WithEndpoint<PizzaService>()
                 .WithEndpoint<WebServer>(builder =>
                     builder.Given((bus, context) => bus.Send(
@@ -37,6 +37,8 @@
                     {
                         Assert.AreEqual(0, context.Exceptions.Count());
                         Assert.AreEqual(1, context.UnitOfWorkEndedCount);
+                        Assert.AreEqual("Ian Was Ere", context.SomeString);
+                        Assert.AreEqual(new Guid("AE60893B-4B57-44D1-BDE7-6AA805D0C7AF"), context.SomeGuid);
                     })
                 .Run();
         }
@@ -65,39 +67,10 @@
         }
     }
 
-    /// <summary>
-    /// Possible to creater custom templates as to replicate exact production fluent config (as can't pass in).
-    /// </summary>
-    public class ExampleCustomTemplate : IEndpointSetupTemplate
+    public class ComplexContext : DefaultContext
     {
-        public Configure GetConfiguration(
-            RunDescriptor runDescriptor, EndpointConfiguration endpointConfiguration, IConfigurationSource configSource)
-        {
-            endpointConfiguration.SetupLogging();
+        public Guid SomeGuid { get; set; }
 
-            Configure.Features.Enable<Features.Sagas>();
-            Configure.Features.Enable<Features.MsmqTransport>();
-            Configure.Features.Disable<Features.SecondLevelRetries>();
-
-            Configure.Serialization.Xml();
-
-            var config = Configure
-                .With(AllAssemblies.Matching("NServiceBus.Testing.Acceptance.Tests"))
-                    .DefineEndpointName(endpointConfiguration.EndpointName)
-                    .DefiningCommandsAs(t => t.Namespace != null && t.Namespace.EndsWith("Tests.Commands"))
-                    .CustomConfigurationSource(configSource)
-                    .DefineBuilder(runDescriptor.Settings.GetOrNull("Builder"), runDescriptor.Settings.GetOrNull("BuilderRegistryType"))
-                    .UseNHibernateSagaPersister()
-                    .UseNHibernateTimeoutPersister()
-                    .UseNHibernateSubscriptionPersister()
-                    .UseTransport<Msmq>()
-                    .PurgeOnStartup(true)
-                    .UnicastBus();
-
-            config.Configurer.ConfigureComponent<FailureHandler>(DependencyLifecycle.SingleInstance);
-            config.Configurer.ConfigureComponent<UnitOfWorkInterceptor>(DependencyLifecycle.InstancePerCall);
-
-            return config;
-        }
+        public string SomeString { get; set; }
     }
 }
