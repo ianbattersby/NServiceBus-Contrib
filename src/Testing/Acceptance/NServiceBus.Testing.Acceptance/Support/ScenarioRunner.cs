@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
+    using System.Messaging;
     using System.Reflection;
     using System.Runtime.Remoting;
     using System.Runtime.Remoting.Lifetime;
@@ -13,6 +14,8 @@
     using System.Threading.Tasks;
 
     using Customization;
+
+    using NServiceBus.Testing.Acceptance.EndpointTemplates;
 
     public class ScenarioRunner
     {
@@ -165,6 +168,41 @@
                 }
 
                 runTimer.Stop();
+
+                var transportToUse = runDescriptor.Settings.GetOrNull("Transport");
+
+                if (transportToUse != null && transportToUse.Contains("Msmq"))
+                {
+                    runners.ForEach(
+                        r => MessageQueue
+                                 .GetPrivateQueuesByMachine(".")
+                                 .Where(q => q.QueueName.StartsWith(string.Format("private$\\{0}", r.EndpointName), StringComparison.InvariantCultureIgnoreCase))
+                                 .ToList()
+                                 .ForEach(
+                                     q =>
+                                         {
+                                             try
+                                             {
+                                                 var isMsg = null != q.Peek(
+                                                     new TimeSpan(1),
+                                                     q.CreateCursor(),
+                                                     PeekAction.Current);
+
+                                                 if (isMsg)
+                                                 {
+                                                     throw new Exception(
+                                                         string.Format("Queue {0} is not empty!", r.EndpointName));
+                                                 }
+                                             }
+                                             catch (MessageQueueException mqe)
+                                             {
+                                                 if (!mqe.Message.ToLower().Contains("timeout"))
+                                                 {
+                                                     throw;
+                                                 }
+                                             }
+                                         }));
+                }
 
                 Parallel.ForEach(
                     shoulds.Where(s => s.ContextType == runDescriptor.ScenarioContext.GetType()).ToList(),

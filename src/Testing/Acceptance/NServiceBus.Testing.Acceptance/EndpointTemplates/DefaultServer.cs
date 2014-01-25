@@ -69,6 +69,7 @@
                 MessageQueue
                     .GetPrivateQueuesByMachine(".")
                     .Where(q => q.QueueName.StartsWith(string.Format("private$\\{0}", endpointConfiguration.EndpointName), StringComparison.InvariantCultureIgnoreCase))
+                    .ToList()
                     .ForEach(q => q.Purge());
             }
 
