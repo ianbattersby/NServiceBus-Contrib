@@ -6,6 +6,8 @@
     using System.Messaging;
     using System.Reflection;
 
+    using NHibernate.Linq;
+
     using NServiceBus;
     using NServiceBus.Config.ConfigurationSource;
     using NServiceBus.Hosting.Helpers;
@@ -62,8 +64,13 @@
                                 settings.GetOrNull("NHibernate.Dialect"),
                                 settings.GetOrNull("NHibernate.Driver"));
 
-            if (endpointConfiguration.PurgeOnStartup && transportToUse.Contains("Msmq") && MessageQueue.Exists(String.Format(".\\private$\\{0}", endpointConfiguration.EndpointName)))
-                MessageQueue.Delete(String.Format(".\\private$\\{0}", endpointConfiguration.EndpointName));
+            if (endpointConfiguration.PurgeOnStartup && transportToUse.Contains("Msmq"))
+            {
+                MessageQueue
+                    .GetPrivateQueuesByMachine(".")
+                    .Where(q => q.QueueName.StartsWith(string.Format("private$\\{0}", endpointConfiguration.EndpointName), StringComparison.InvariantCultureIgnoreCase))
+                    .ForEach(q => q.Purge());
+            }
 
             config.Configurer.ConfigureComponent<FailureHandler>(DependencyLifecycle.SingleInstance);
             config.Configurer.ConfigureComponent<UnitOfWorkInterceptor>(DependencyLifecycle.SingleInstance);
