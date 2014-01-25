@@ -13,6 +13,7 @@
             this.UserDefinedConfigSections = new Dictionary<Type, object>();
             this.TypesToExclude = new List<Type>();
             this.AssembliesToScan = new List<Assembly>();
+            this.PurgeOnStartup = true;
         }
 
         public IDictionary<Type, Type> EndpointMappings { get; set; }
