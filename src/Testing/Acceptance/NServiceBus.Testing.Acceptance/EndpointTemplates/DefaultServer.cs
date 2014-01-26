@@ -109,7 +109,7 @@
             }
 
             var types = qualifyingTypes
-                .Where(t => endpointConfiguration.TypesToExclude.Count == 0 || !endpointConfiguration.NamespacesToExclude.Any(e => t.Namespace.StartsWith(e, StringComparison.InvariantCultureIgnoreCase)))
+                .Where(t => endpointConfiguration.NamespacesToExclude.Count == 0 || (t != null && !String.IsNullOrWhiteSpace(t.Namespace) && !endpointConfiguration.NamespacesToExclude.Any(e => t.Namespace.StartsWith(e, StringComparison.InvariantCultureIgnoreCase))))
                 .Union(GetNestedTypeRecursive(endpointConfiguration.BuilderType.DeclaringType))
                 .Where(t => !endpointConfiguration.TypesToExclude.Contains(t)).ToList();
 

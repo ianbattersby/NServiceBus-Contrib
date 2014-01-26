@@ -76,7 +76,7 @@
 
         public static readonly RunDescriptor StructureMap = new RunDescriptor
             {
-                Key = "StructureMap",
+                Key = "SM",
                 Settings =
                     new Dictionary<string, string>
                         {
