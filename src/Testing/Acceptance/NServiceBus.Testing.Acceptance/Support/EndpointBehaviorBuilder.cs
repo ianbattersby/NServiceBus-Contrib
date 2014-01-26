@@ -22,15 +22,10 @@
         {
             this.behaviour.Givens.Add(new GivenDefinition<TContext>((bus, context) =>
                 {
-                    if (!typeof(DefaultContext).IsAssignableFrom(context.GetType()))
-                    {
-                        throw new Exception("You must use DefaultContext, or inherit from it, to monitor subscriptions.");
-                    }
-
                     if (Feature.IsEnabled<MessageDrivenSubscriptions>())
                     {
                         Configure.Instance.Builder.Build<MessageDrivenSubscriptionManager>().ClientSubscribed +=
-                            (sender, args) => (context as DefaultContext).SubscriptionsCount++;
+                            (sender, args) => context.SubscriptionsCount++;
                     }
                 }));
 
@@ -58,15 +53,10 @@
                     context => context.EndpointsStarted,
                     (bus, context) =>
                         {
-                            if (!typeof(DefaultContext).IsAssignableFrom(context.GetType()))
-                            {
-                                throw new Exception("You must use DefaultContext, or inherit from it, to monitor subscriptions.");
-                            }
-
                             bus.Subscribe<TEvent>();
 
                             if (!Feature.IsEnabled<MessageDrivenSubscriptions>())
-                                (context as DefaultContext).SubscriptionsCount++;
+                                context.SubscriptionsCount++;
                         }));
 
             return this;

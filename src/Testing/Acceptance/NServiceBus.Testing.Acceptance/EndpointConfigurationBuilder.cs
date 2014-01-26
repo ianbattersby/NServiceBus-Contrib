@@ -165,7 +165,14 @@
 
         public EndpointConfigurationBuilder ScanningAssembly(Assembly assembly)
         {
-            this.configuration.AssembliesToScan.Add(assembly);
+            this.configuration.AssembliesToScan.Add(new Tuple<Assembly, string>(assembly, null));
+
+            return this;
+        }
+
+        public EndpointConfigurationBuilder ScanningAssemblyAndNamespace(Assembly assembly, string includeNamespace)
+        {
+            this.configuration.AssembliesToScan.Add(new Tuple<Assembly, string>(assembly, includeNamespace));
 
             return this;
         }

@@ -20,7 +20,7 @@
         {
             var settings = runDescriptor.Settings;
 
-            endpointConfiguration.SetupLogging();
+            SetLoggingLibrary.Log4Net(null, new ContextAppender(runDescriptor.ScenarioContext, endpointConfiguration));
 
             var types = GetTypesToUse(endpointConfiguration);
 
@@ -64,6 +64,8 @@
                                 settings.GetOrNull("NHibernate.Dialect"),
                                 settings.GetOrNull("NHibernate.Driver"));
 
+            config.Configurer.ConfigureComponent<UnitOfWorkInterceptor>(DependencyLifecycle.SingleInstance);
+
             if (endpointConfiguration.PurgeOnStartup && transportToUse.Contains("Msmq"))
             {
                 MessageQueue
@@ -73,22 +75,41 @@
                     .ForEach(q => q.Purge());
             }
 
-            config.Configurer.ConfigureComponent<FailureHandler>(DependencyLifecycle.SingleInstance);
-            config.Configurer.ConfigureComponent<UnitOfWorkInterceptor>(DependencyLifecycle.SingleInstance);
-
             return config.UnicastBus();
         }
 
         static IEnumerable<Type> GetTypesToUse(EndpointConfiguration endpointConfiguration)
         {
-            var assemblies = endpointConfiguration.AssembliesToScan.Count > 0 ?
-                endpointConfiguration.AssembliesToScan : new AssemblyScanner().GetScannableAssemblies().Assemblies;
+            IEnumerable<Type> qualifyingTypes;
 
-            var types = assemblies
+            if (endpointConfiguration.AssembliesToScan.Count > 0)
+            {
+                var assemblyTypes = new List<Type>();
+
+                foreach (var assemblySpec in endpointConfiguration.AssembliesToScan)
+                {
+                    var assembly = assemblySpec.Item1;
+
+                    if (assembly != Assembly.GetExecutingAssembly())
+                    {
+                        assemblyTypes.AddRange(
+                            string.IsNullOrWhiteSpace(assemblySpec.Item2)
+                            ? assembly.GetTypes()
+                            : assembly.GetTypes().Where(t => t.Namespace.StartsWith(assemblySpec.Item2, StringComparison.InvariantCultureIgnoreCase)));
+                    }
+                }
+
+                qualifyingTypes = assemblyTypes;
+            }
+            else
+            {
+                qualifyingTypes = new AssemblyScanner().GetScannableAssemblies().Assemblies
                             .Where(a => a != Assembly.GetExecutingAssembly())
                             .SelectMany(a => a.GetTypes());
+            }
 
-            types = types
+            var types = qualifyingTypes
+                .Where(t => endpointConfiguration.TypesToExclude.Count == 0 || !endpointConfiguration.NamespacesToExclude.Any(e => t.Namespace.StartsWith(e, StringComparison.InvariantCultureIgnoreCase)))
                 .Union(GetNestedTypeRecursive(endpointConfiguration.BuilderType.DeclaringType))
                 .Where(t => !endpointConfiguration.TypesToExclude.Contains(t)).ToList();
 

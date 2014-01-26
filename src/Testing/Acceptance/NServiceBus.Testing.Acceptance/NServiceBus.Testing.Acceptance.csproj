@@ -50,6 +50,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Iesi.Collections.3.3.3.4001\lib\Net35\Iesi.Collections.dll</HintPath>
     </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.1\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
@@ -138,9 +141,10 @@
     </Compile>
     <Compile Include="DefaultContext.cs" />
     <Compile Include="EndpointTemplates\ConfigureExtensions.cs" />
+    <Compile Include="EndpointTemplates\ContextAppender.cs" />
     <Compile Include="EndpointTemplates\DefaultServer.cs" />
-    <Compile Include="EndpointTemplates\FailureHandler.cs" />
     <Compile Include="EndpointTemplates\UnitOfWorkInterceptor.cs" />
+    <Compile Include="Properties\AssemblyInfo.log4net.cs" />
     <Compile Include="ScenarioDescriptors\AllBuilders.cs" />
     <Compile Include="ScenarioDescriptors\AllTimeoutPersisters.cs" />
     <Compile Include="ScenarioDescriptors\AllSagaPersisters.cs" />
@@ -163,6 +167,7 @@
     <Compile Include="Support\EndpointRunner.cs" />
     <Compile Include="Support\IEndpointSetupTemplate.cs" />
     <Compile Include="Support\IScenarioWithEndpointBehavior.cs" />
+    <Compile Include="Support\Log4NetBridgeAppender.cs" />
     <Compile Include="Support\RunDescriptor.cs" />
     <Compile Include="Support\RunDescriptorsBuilder.cs" />
     <Compile Include="Scenario.cs" />

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using System.Threading;
 
     using NServiceBus.Config;
     using NServiceBus.Testing.Acceptance.Customization;
@@ -10,8 +11,9 @@
     using NServiceBus.Testing.Acceptance.Support;
 
     using NUnit.Framework;
+    using NUnit.Framework.Constraints;
 
-    public class CustomContext : DefaultContext
+    public class CustomContext : ScenarioContext
     {
         public bool HandlerInvoked { get; set; }
 
@@ -43,7 +45,7 @@
                                             }));
                             })
                     .WithEndpoint<Subscriber>(builder => builder.Subscribe<TestEvent>())
-                    .Done(context => context.SubscriptionsCount == 1 && context.HandlerInvoked)
+                    .Done(context => context.SubscriptionsCount == 1 && context.HandlerInvoked && context.UnitOfWorkEndedCount == 2)
                     .Should(context =>
                         {
                             Assert.AreEqual(1, context.Exceptions.Count());

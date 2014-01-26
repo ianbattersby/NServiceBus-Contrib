@@ -67,7 +67,7 @@
         }
     }
 
-    public class ComplexContext : DefaultContext
+    public class ComplexContext : ScenarioContext
     {
         public Guid SomeGuid { get; set; }
 

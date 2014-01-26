@@ -12,8 +12,6 @@
         public Configure GetConfiguration(
             RunDescriptor runDescriptor, EndpointConfiguration endpointConfiguration, IConfigurationSource configSource)
         {
-            endpointConfiguration.SetupLogging();
-
             Configure.Features.Enable<Features.Sagas>();
             Configure.Features.Enable<Features.MsmqTransport>();
             Configure.Features.Disable<Features.SecondLevelRetries>();
@@ -33,7 +31,6 @@
                 .PurgeOnStartup(true)
                 .UnicastBus();
 
-            config.Configurer.ConfigureComponent<FailureHandler>(DependencyLifecycle.SingleInstance);
             config.Configurer.ConfigureComponent<UnitOfWorkInterceptor>(DependencyLifecycle.InstancePerCall);
 
             return config;

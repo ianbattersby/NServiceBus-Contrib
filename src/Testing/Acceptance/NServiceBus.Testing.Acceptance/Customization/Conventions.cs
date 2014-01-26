@@ -9,7 +9,7 @@ namespace NServiceBus.Testing.Acceptance.Customization
     {
         static Conventions()
         {
-            EndpointNamingConvention = t => "acceptance." + t.Name.Replace("+", "-");
+            EndpointNamingConvention = t => "at." + t.Name.Replace("+", "-");
         }
 
         public static Func<RunDescriptor> DefaultRunDescriptor = () => new RunDescriptor { Key = "Default" };

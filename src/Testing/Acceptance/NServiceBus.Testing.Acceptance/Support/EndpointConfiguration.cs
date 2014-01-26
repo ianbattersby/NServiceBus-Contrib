@@ -12,15 +12,18 @@
         {
             this.UserDefinedConfigSections = new Dictionary<Type, object>();
             this.TypesToExclude = new List<Type>();
-            this.AssembliesToScan = new List<Assembly>();
+            this.AssembliesToScan = new List<Tuple<Assembly, string>>();
+            this.NamespacesToExclude = new List<string>();
             this.PurgeOnStartup = true;
         }
 
         public IDictionary<Type, Type> EndpointMappings { get; set; }
 
-        public IList<Assembly> AssembliesToScan { get; set; } 
+        public IList<Tuple<Assembly, string>> AssembliesToScan { get; set; } 
 
         public IList<Type> TypesToExclude { get; set; }
+
+        public IList<string> NamespacesToExclude { get; set; } 
 
         public Func<RunDescriptor, IDictionary<Type, string>, Configure> GetConfiguration { get; set; }
 

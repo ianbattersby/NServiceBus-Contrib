@@ -154,13 +154,16 @@
 
             try
             {
-                List<ActiveRunner> runners = InitializeRunners(runDescriptor, behaviorDescriptors);
+                var runners = InitializeRunners(runDescriptor, behaviorDescriptors);
 
                 try
                 {
                     runResult.ActiveEndpoints = runners.Select(r => r.EndpointName).ToList();
 
-                    PerformScenarios(runDescriptor,runners, () => done(runDescriptor.ScenarioContext));
+                    PerformScenarios(
+                        runDescriptor,
+                        runners,
+                        () => done(runDescriptor.ScenarioContext));
                 }
                 finally
                 {
@@ -169,9 +172,12 @@
 
                 runTimer.Stop();
 
+                var contextExceptionProp = runResult.ScenarioContext.GetType().GetProperties().FirstOrDefault(p => p.Name == "Exceptions");
+                var contextExceptions = contextExceptionProp != null && ((IEnumerable<Exception>)contextExceptionProp.GetValue(runResult.ScenarioContext, null)).Any();
+
                 var transportToUse = runDescriptor.Settings.GetOrNull("Transport");
 
-                if (transportToUse != null && transportToUse.Contains("Msmq"))
+                if (!runResult.Failed && !contextExceptions && transportToUse != null && transportToUse.Contains("Msmq"))
                 {
                     runners.ForEach(
                         r => MessageQueue

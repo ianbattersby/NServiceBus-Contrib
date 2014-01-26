@@ -5,9 +5,6 @@
     using System.Collections.Specialized;
     using System.Configuration;
     using System.IO;
-    using System.Runtime.Remoting.Messaging;
-
-    using NHibernate.Util;
 
     using NServiceBus.ObjectBuilder.Autofac;
     using NServiceBus.ObjectBuilder.CastleWindsor;
@@ -245,28 +242,6 @@
 
 
             throw new InvalidOperationException("Unknown builder:" + builder);
-        }
-
-        public static void SetupLogging(this EndpointConfiguration endpointConfiguration)
-        {
-            var logDir = ".\\logfiles\\";
-
-            if (!Directory.Exists(logDir))
-                Directory.CreateDirectory(logDir);
-
-            var logFile = Path.Combine(logDir, endpointConfiguration.EndpointName + "-" + endpointConfiguration.BuilderType.Name + ".txt");
-
-            if (File.Exists(logFile))
-                File.Delete(logFile);
-
-            var logLevel = "DEBUG";
-            var logLevelOverride = Environment.GetEnvironmentVariable("tests_loglevel");
-
-            if (!string.IsNullOrEmpty(logLevelOverride))
-                logLevel = logLevelOverride;
-
-            SetLoggingLibrary.Log4Net(
-                null, NServiceBus.Logging.Loggers.Log4NetAdapter.Log4NetAppenderFactory.CreateRollingFileAppender(logLevel, logFile));
         }
 
         private static void AddAppSetting(string name, string value)

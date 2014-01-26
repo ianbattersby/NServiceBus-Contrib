@@ -14,14 +14,14 @@
 
         public void Begin()
         {
-            if (typeof(DefaultContext).IsAssignableFrom(this.Context.GetType()))
-                ((DefaultContext)this.Context).UnitOfWorkStartedCount++;
+            if (typeof(ScenarioContext).IsAssignableFrom(this.Context.GetType()))
+                ((ScenarioContext)this.Context).UnitOfWorkStartedCount++;
         }
 
         public void End(Exception ex = null)
         {
-            if (typeof(DefaultContext).IsAssignableFrom(this.Context.GetType()))
-                ((DefaultContext)this.Context).UnitOfWorkEndedCount++;
+            if (typeof(ScenarioContext).IsAssignableFrom(this.Context.GetType()))
+                ((ScenarioContext)this.Context).UnitOfWorkEndedCount++;
         }
     }
 }
