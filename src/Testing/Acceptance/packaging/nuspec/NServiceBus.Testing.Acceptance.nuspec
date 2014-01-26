@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>NServiceBus.Testing.Acceptance</id>
-    <version>4.3.5.1200</version>
+    <version>4.3.5.1210</version>
     <authors>NServiceBus Ltd</authors>
     <owners>nservicebus</owners>
     <copyright>Copyright (C) NServiceBus 2010-2013</copyright>

@@ -163,6 +163,13 @@
             return this;
         }
 
+        public EndpointConfigurationBuilder ExcludeNamespace(string namespacePrefix)
+        {
+            this.configuration.NamespacesToExclude.Add(namespacePrefix);
+
+            return this;
+        }
+
         public EndpointConfigurationBuilder ScanningAssembly(Assembly assembly)
         {
             this.configuration.AssembliesToScan.Add(new Tuple<Assembly, string>(assembly, null));
@@ -170,9 +177,9 @@
             return this;
         }
 
-        public EndpointConfigurationBuilder ScanningAssemblyAndNamespace(Assembly assembly, string includeNamespace)
+        public EndpointConfigurationBuilder ScanningAssembly(Assembly assembly, string includeNamespacePrefix)
         {
-            this.configuration.AssembliesToScan.Add(new Tuple<Assembly, string>(assembly, includeNamespace));
+            this.configuration.AssembliesToScan.Add(new Tuple<Assembly, string>(assembly, includeNamespacePrefix));
 
             return this;
         }
